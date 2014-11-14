@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php
+use Symfony\Component\Console\Application;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Console\Command\Command;
+
+set_time_limit(0);
+
+require_once "vendor/autoload.php";
+
+$finder = new Finder();
+
+$commandFiles = $finder->files()
+    ->name('*Command.php')
+    ->notName('*BaseCommand.php')
+    ->in('src')
+;
+
+$commands = array();
+
+foreach ($commandFiles as $file) {
+    if (preg_match('#^namespace\s+(.+?);.*class\s+(\w+).+;$#sm', $file->getContents(), $m)) {
+        $class = $m[1].'\\'.$m[2];
+        $object = new $class();
+        if ($object instanceof Command) {
+            $commands[] = $object;
+        }
+    }
+}
+
+$console = new Application();
+$console->addCommands($commands);
+$console->run();

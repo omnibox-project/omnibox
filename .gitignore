@@ -2,3 +2,4 @@
 /.idea
 uberstead.yaml
 .DS_Store
+/vendor/*
