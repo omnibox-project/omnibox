@@ -1,0 +1,19 @@
+---
+ip: "192.168.10.10"
+memory: 2048
+cpus: 1
+
+authorize: ~/.ssh/id_rsa.pub
+
+keys:
+    - ~/.ssh/id_rsa
+
+defaultfoldertype: nfs
+
+sites:
+    - domain: site1.example.com
+      directory: ~/Documents/site1
+      webroot: web
+    - domain: site2.example.com
+      directory: ~/site2
+      webroot: web
