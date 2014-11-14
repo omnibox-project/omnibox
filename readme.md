@@ -2,7 +2,7 @@
 
 Homestead but for Symfony and Parallels based on ivonunes/homestead.
 
-## Configure
+## Usage
 
 - "vagrant box add ivonunes/homestead"
 - Copy uberstead.yaml.dist to uberstead.yaml
