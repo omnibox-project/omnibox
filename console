@@ -13,6 +13,7 @@ $finder = new Finder();
 $commandFiles = $finder->files()
     ->name('*Command.php')
     ->notName('*BaseCommand.php')
+    ->notName('CheckConfigCommand.php')
     ->in('src')
 ;
 
