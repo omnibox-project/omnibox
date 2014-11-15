@@ -25,13 +25,11 @@ class SitesListCommand extends BaseCommand
         $yaml = new Parser();
         $array = $yaml->parse(file_get_contents('uberstead.yaml'));
 
-        foreach ($array['sites'] as $key => $site) {
-            $output->writeln($site['name']);
-            $output->writeln("  Domain:    " . $site['domain']);
-            $output->writeln("  Directory: " . $site['directory']);
-            $output->writeln("  Webroot:   " . $site['webroot']);
-            $output->writeln("");
-        }
+        $table = $this->getHelper('table');
+        $table
+            ->setHeaders(array('Name', 'Domain', 'Directory', 'Web root'))
+            ->setRows($array['sites']);
+        $table->render($output);
 
         if (count($array['sites']) === 0) {
             $output->writeln("No sites have been added yet");
