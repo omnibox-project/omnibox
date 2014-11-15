@@ -1,5 +1,5 @@
 <?php
-namespace Uberstrap;
+namespace Uberstead;
 
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
