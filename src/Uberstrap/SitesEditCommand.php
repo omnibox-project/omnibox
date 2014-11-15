@@ -44,17 +44,16 @@ class SitesEditCommand extends BaseCommand
             $sites,
             0
         );
-        $question->setErrorMessage('The choise %s is invalid.');
+        $question->setErrorMessage('The choice %s is invalid.');
         $domain = $helper->ask($input, $output, $question);
 
         foreach ($array['sites'] as $key => $site) {
             if ($site['domain'] === $domain) {
-                $site = $array['sites'][$key];
                 $siteKey = $key;
             }
         }
 
-        $question = new Question('Update site name: ['.$site['name'].'] ', $site['name']);
+        $question = new Question('Update site name: ['.$array['sites'][$siteKey]['name'].'] ', $array['sites'][$siteKey]['name']);
         $question->setValidator(function ($answer) {
                 if (strlen(trim($answer)) === 0) {
                     throw new \RuntimeException(
@@ -65,7 +64,7 @@ class SitesEditCommand extends BaseCommand
             });
         $array['sites'][$siteKey]['name'] = $helper->ask($input, $output, $question);
 
-        $question = new Question('Update domain: ['.$site['domain'].'] ', $site['domain']);
+        $question = new Question('Update domain: ['.$array['sites'][$siteKey]['domain'].'] ', $array['sites'][$siteKey]['domain']);
         $question->setValidator(function ($answer) {
                 if (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $answer) //valid chars check
                     && preg_match("/^.{1,253}$/", $answer) //overall length check
@@ -79,7 +78,7 @@ class SitesEditCommand extends BaseCommand
             });
         $array['sites'][$siteKey]['domain'] = $helper->ask($input, $output, $question);
 
-        $question = new Question('Update directory: ['.$site['directory'].'] ', $site['directory']);
+        $question = new Question('Update directory: ['.$array['sites'][$siteKey]['directory'].'] ', $array['sites'][$siteKey]['directory']);
         $question->setValidator(function ($answer) {
                 if (!file_exists($answer)) {
                     throw new \RuntimeException(
@@ -90,7 +89,7 @@ class SitesEditCommand extends BaseCommand
             });
         $array['sites'][$siteKey]['directory'] = $helper->ask($input, $output, $question);
 
-        $question = new Question('Update webroot: ['.$site['webroot'].'] ', $site['webroot']);
+        $question = new Question('Update webroot: ['.$array['sites'][$siteKey]['webroot'].'] ', $array['sites'][$siteKey]['webroot']);
         $array['sites'][$siteKey]['webroot'] = $helper->ask($input, $output, $question);
 
         $dumper = new Dumper();
