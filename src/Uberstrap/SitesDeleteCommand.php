@@ -33,7 +33,7 @@ class SitesDeleteCommand extends BaseCommand
 
         $sites = array();
         foreach ($array['sites'] as $key => $site) {
-            $sites[] = $site['domain'];
+            $sites[] = $site['name'];
         }
 
         $helper = $this->getHelper('question');
@@ -46,7 +46,7 @@ class SitesDeleteCommand extends BaseCommand
         $domain = $helper->ask($input, $output, $question);
 
         foreach ($array['sites'] as $key => $site) {
-            if ($site['domain'] === $domain) {
+            if ($site['name'] === $domain) {
                 unset($array['sites'][$key]);
             }
         }
