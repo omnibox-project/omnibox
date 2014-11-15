@@ -96,5 +96,7 @@ class SitesEditCommand extends BaseCommand
         $dumper = new Dumper();
         $yaml = $dumper->dump($array, 3);
         file_put_contents('uberstead.yaml', $yaml);
+
+        $this->runProvision($input, $output);
     }
 }

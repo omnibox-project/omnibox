@@ -13,4 +13,11 @@ class BaseCommand extends Command
         $command->setApplication($this->getApplication());
         $command->run($input, $output);
     }
+
+    public function runProvision(InputInterface $input, OutputInterface $output)
+    {
+        $command = new UbersteadProvisionCommand();
+        $command->setApplication($this->getApplication());
+        $command->run($input, $output);
+    }
 }
