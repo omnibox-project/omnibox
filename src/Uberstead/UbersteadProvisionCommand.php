@@ -43,6 +43,7 @@ class UbersteadProvisionCommand extends BaseCommand
         }
         $hostsFile[] = $prefix.$sites;
         $hostsFile = implode("", $hostsFile);
+        $hostsFile = trim($hostsFile, "\n")."\n";
         file_put_contents('/etc/hosts', $hostsFile);
 
         # Flush cache
