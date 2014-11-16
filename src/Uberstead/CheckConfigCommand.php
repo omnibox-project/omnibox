@@ -20,7 +20,7 @@ class CheckConfigCommand extends BaseCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         if (posix_getuid() != 0) {
-            $output->writeln('This command needs root access in order to edit your host file. Please run as root (sudo).');
+            $output->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
             die();
         }
 
