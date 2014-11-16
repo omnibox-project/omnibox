@@ -49,6 +49,11 @@ class Uberstead
       s.inline = "cp /vagrant/aliases /home/vagrant/.bash_aliases"
     end
 
+    # Install extra stuff
+    config.vm.provision "shell" do |s|
+      s.inline = "sh /vagrant/scripts/provision.sh"
+    end
+
     # Install All The Configured Nginx Sites
     settings["sites"].each do |site|
       config.vm.synced_folder site["directory"], "/home/vagrant/" + site["domain"], type: site["type"] ||= settings["defaultfoldertype"] ||= nil
