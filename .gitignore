@@ -4,3 +4,4 @@ uberstead.yaml
 .DS_Store
 /vendor/*
 /composer.phar
+/logs/*
