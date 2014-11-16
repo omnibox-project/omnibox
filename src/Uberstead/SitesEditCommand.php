@@ -87,9 +87,19 @@ class SitesEditCommand extends BaseCommand
                 }
                 return $answer;
             });
-        $array['sites'][$siteKey]['directory'] = $helper->ask($input, $output, $question);
+        $newDirectory = $helper->ask($input, $output, $question);
+        $updateNfsShares = ($newDirectory != $array['sites'][$siteKey]['directory']);
+        $array['sites'][$siteKey]['directory'] = $newDirectory;
 
         $question = new Question('Update webroot: ['.$array['sites'][$siteKey]['webroot'].'] ', $array['sites'][$siteKey]['webroot']);
+        $question->setValidator(function ($answer) use ($newDirectory) {
+                if (!file_exists($newDirectory. DIRECTORY_SEPARATOR . $answer)) {
+                    throw new \RuntimeException(
+                        'The folder does not exist. Try again.'
+                    );
+                }
+                return $answer;
+            });
         $array['sites'][$siteKey]['webroot'] = $helper->ask($input, $output, $question);
 
         $dumper = new Dumper();
@@ -97,5 +107,9 @@ class SitesEditCommand extends BaseCommand
         file_put_contents('uberstead.yaml', $yaml);
 
         $this->runProvision($input, $output);
+
+        if ($updateNfsShares) {
+            $this->updateNfsShares($input, $output);
+        }
     }
 }
