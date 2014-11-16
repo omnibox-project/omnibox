@@ -66,7 +66,7 @@ class SitesAddCommand extends BaseCommand
         } else {
             $defaultDirectory = DIRECTORY_SEPARATOR . $name;
         }
-        $question = new Question('Directory (/some/example/folder): ['.$defaultDirectory.']', $defaultDirectory);
+        $question = new Question('Directory (/some/example/folder): ['.$defaultDirectory.'] ', $defaultDirectory);
         $question->setValidator(
             function ($answer) {
                 if (!file_exists($answer)) {
@@ -80,7 +80,7 @@ class SitesAddCommand extends BaseCommand
         );
         $directory = $helper->ask($input, $output, $question);
 
-        $question = new Question('Web root (relative to the site directory): [web]', 'web');
+        $question = new Question('Web root (relative to the site directory): [web] ', 'web');
         $question->setValidator(
             function ($answer) use ($directory) {
                 if (!file_exists($directory. DIRECTORY_SEPARATOR . $answer)) {
@@ -106,5 +106,6 @@ class SitesAddCommand extends BaseCommand
         file_put_contents('uberstead.yaml', $yaml);
 
         $this->runProvision($input, $output);
+        $this->updateNfsShares($input, $output);
     }
 }
