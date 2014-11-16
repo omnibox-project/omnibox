@@ -13,12 +13,16 @@ Homestead on steriods for Symfony based on ivonunes/homestead.
 - Vagrant
 - Vagrant Parallels Plugin
 
-## Usage
+## Initial setup
 
 - Run `composer install`
 - Setup Uberstead with `sudo php console uberstead:settings`
 - Run `vagrant up`
 - Add your first site with `sudo php console site:add`
+
+## Usage
+
+- Run `sudo php console` for a list of available commands
 
 ## Database
 
