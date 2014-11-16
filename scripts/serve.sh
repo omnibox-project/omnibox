@@ -7,6 +7,7 @@ root="/home/vagrant/$domain"
 webroot="$root/$webroot"
 
 block="server {
+    fastcgi_read_timeout 600;
     server_name $domain;
     root $webroot;
 
@@ -24,7 +25,9 @@ block="server {
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         fastcgi_param HTTPS off;
         fastcgi_param REMOTE_ADDR 127.0.0.1;
-        fastcgi_param PHP_VALUE "xdebug.max_nesting_level=1000";
+        fastcgi_param PHP_VALUE \"xdebug.max_nesting_level=1000
+xdebug.remote_host=192.168.10.1
+xdebug.remote_connect_back=0\";
     }
     # PROD
     location ~ ^/app\.php(/|$) {
@@ -34,15 +37,17 @@ block="server {
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         fastcgi_param HTTPS off;
         fastcgi_param REMOTE_ADDR 127.0.0.1;
-        fastcgi_param PHP_VALUE "xdebug.max_nesting_level=1000";
+        fastcgi_param PHP_VALUE \"xdebug.max_nesting_level=1000
+xdebug.remote_host=192.168.10.1
+xdebug.remote_connect_back=0\";
         # Prevents URIs that include the front controller. This will 404:
         # http://domain.tld/app.php/some-path
         # Remove the internal directive to allow URIs like this
         internal;
     }
 
-    error_log /var/log/nginx/${domain}_error.log;
-    access_log /var/log/nginx/${domain}_access.log;
+    error_log /vagrant/logs/${domain}_error.log;
+    access_log /vagrant/logs/${domain}_access.log;
 }
 "
 
