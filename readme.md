@@ -32,3 +32,6 @@ See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 - The settings command should be able to update the settings, not only create the settings initially
 - Show nice table list with sites when running "sites:delete"
 - Add support for domain aliases
+- Generate new Symfony2 project and setup database
+- Add support for generating bootstrap edition project
+- Implement Vagrant-hostmanager?
