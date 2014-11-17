@@ -21,8 +21,7 @@ class UbersteadProvisionCommand extends BaseCommand
     {
         $this->checkConfig($input, $output);
 
-        $yaml = new Parser();
-        $array = $yaml->parse(file_get_contents('uberstead.yaml'));
+        $array = $this->getConfig();
 
         $ip = $array['ip'];
         $comment = "# Uberstead Sites";

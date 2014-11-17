@@ -22,8 +22,8 @@ class SitesAddCommand extends BaseCommand
     {
         $this->checkConfig($input, $output);
 
-        $yaml = new Parser();
-        $array = $yaml->parse(file_get_contents('uberstead.yaml'));
+        $array = $this->getConfig();
+
         $sites = $array['sites'];
         $siteNames = array_map(function ($x) { return $x['name']; }, $sites);
 
@@ -101,9 +101,7 @@ class SitesAddCommand extends BaseCommand
             'webroot' => $webroot,
         ];
 
-        $dumper = new Dumper();
-        $yaml = $dumper->dump($array, 3);
-        file_put_contents('uberstead.yaml', $yaml);
+        $this->saveConfig($array);
 
         $this->runProvision($input, $output);
         $this->updateNfsShares($input, $output);

@@ -23,8 +23,7 @@ class SitesEditCommand extends BaseCommand
     {
         $this->checkConfig($input, $output);
 
-        $yaml = new Parser();
-        $array = $yaml->parse(file_get_contents('uberstead.yaml'));
+        $array = $this->getConfig();
 
         if (count($array['sites']) === 0) {
             $output->writeln("No sites have been added yet");
@@ -102,9 +101,7 @@ class SitesEditCommand extends BaseCommand
             });
         $array['sites'][$siteKey]['webroot'] = $helper->ask($input, $output, $question);
 
-        $dumper = new Dumper();
-        $yaml = $dumper->dump($array, 3);
-        file_put_contents('uberstead.yaml', $yaml);
+        $this->saveConfig($array);
 
         $this->runProvision($input, $output);
 

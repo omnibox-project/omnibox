@@ -22,8 +22,7 @@ class SitesListCommand extends BaseCommand
     {
         $this->checkConfig($input, $output);
 
-        $yaml = new Parser();
-        $array = $yaml->parse(file_get_contents('uberstead.yaml'));
+        $array = $this->getConfig();
 
         $table = $this->getHelper('table');
         $table

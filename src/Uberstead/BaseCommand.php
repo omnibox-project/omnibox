@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Yaml\Parser;
 
 class BaseCommand extends Command
 {
@@ -15,6 +17,25 @@ class BaseCommand extends Command
         $command = new CheckConfigCommand();
         $command->setApplication($this->getApplication());
         $command->run($input, $output);
+    }
+
+    protected function getConfig()
+    {
+        $yaml = new Parser();
+        $array = $yaml->parse(file_get_contents('uberstead.yaml'));
+
+        if (!isset($array['sites'])) {
+            $array['sites'] = array();
+        }
+
+        return $array;
+    }
+
+    protected function saveConfig($array)
+    {
+        $dumper = new Dumper();
+        $yaml = $dumper->dump($array, 3);
+        file_put_contents('uberstead.yaml', $yaml);
     }
 
     public function runProvision(InputInterface $input, OutputInterface $output)
