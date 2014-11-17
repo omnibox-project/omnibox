@@ -3,7 +3,9 @@ namespace Uberstead;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Console\Helper\ProgressHelper;
 
 class UbersteadProvisionCommand extends BaseCommand
 {
@@ -17,6 +19,8 @@ class UbersteadProvisionCommand extends BaseCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->checkConfig($input, $output);
+
         $yaml = new Parser();
         $array = $yaml->parse(file_get_contents('uberstead.yaml'));
 
@@ -48,5 +52,7 @@ class UbersteadProvisionCommand extends BaseCommand
 
         # Flush cache
         exec('dscacheutil -flushcache');
+        $output->writeln('<info>Running "vagrant reload"...</info>');
+        $this->runCommandWithProgressBar($input, $output, 'su $SUDO_USER -c "vagrant provision"', 35);
     }
 }

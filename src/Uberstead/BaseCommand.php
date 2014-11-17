@@ -29,28 +29,47 @@ class BaseCommand extends Command
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('<question>You have changed the shared directories. You need to run "vagrant reload" to apply the changes. Would you like to do it now? [y]</question>', true);
         if ($helper->ask($input, $output, $question)) {
-            $cmd = 'su $SUDO_USER -c "vagrant reload"';
+            $output->writeln('<info>Running "vagrant reload"...</info>');
+            $this->runCommandWithProgressBar($input, $output, 'su $SUDO_USER -c "vagrant reload"', 30);
+        }
+    }
 
+    public function runCommandWithProgressBar(InputInterface $input, OutputInterface $output, $command, $expectedLinesNum = 50)
+    {
+        $isVerbose = (OutputInterface::VERBOSITY_VERBOSE == $output->getVerbosity());
+
+        if (!$isVerbose) {
             /** @var ProgressHelper $progress */
             $progress = $this->getHelper('progress');
             $progress->setBarWidth(60);
-            $progress->start($output, 30);
+            $progress->start($output, $expectedLinesNum);
+        }
 
-            $process = new Process($cmd);
-            $process->setTimeout(null);
+        $process = new Process($command);
+        $process->setTimeout(null);
 
-            $error = false;
-            $bufferArr = array();
-            $process->run(function ($type, $buffer) use (&$progress, &$error, &$bufferArr) {
-                    if (Process::ERR === $type) {
-                        $error = true;
-                        $bufferArr[] = '<error>'.$buffer.'</error>';
-                    } else {
-                        $bufferArr[] = $buffer;
-                    }
-                    $progress->advance();
-                });
-            $progress->setCurrent(30);
+        $error = false;
+        $bufferArr = array();
+        $process->run(function ($type, $buffer) use (&$progress, &$error, &$bufferArr, &$output, &$isVerbose) {
+            if ($isVerbose) {
+                if (Process::ERR === $type) {
+                    $output->write('<error>'.$buffer.'</error>');
+                } else {
+                    $output->write('<info>'.$buffer.'</info>');
+                }
+            } else {
+                if (Process::ERR === $type) {
+                    $error = true;
+                    $bufferArr[] = '<error>'.$buffer.'</error>';
+                } else {
+                    $bufferArr[] = $buffer;
+                }
+                $progress->advance();
+            }
+        });
+
+        if (!$isVerbose) {
+            $progress->setCurrent($expectedLinesNum);
             $progress->finish();
 
             if ($error) {
