@@ -102,6 +102,7 @@ class SitesEditCommand extends BaseCommand
         $array['sites'][$siteKey]['webroot'] = $helper->ask($input, $output, $question);
 
         $this->saveConfig($array);
+        $this->setDbHintInParametersYml($array['sites'][$siteKey]['directory'], $array['sites'][$siteKey]['name'], $array['ip']);
 
         $this->runProvision($input, $output);
 

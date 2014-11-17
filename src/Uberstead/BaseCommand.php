@@ -12,6 +12,51 @@ use Symfony\Component\Yaml\Parser;
 
 class BaseCommand extends Command
 {
+    public function setDbHintInParametersYml($directory, $name, $ip)
+    {
+        $name = str_replace(" ", "_", $name);
+        $name = strtolower(preg_replace("/[^a-zA-Z0-9_]+/", "", $name));
+
+        $username = "homestead";
+        $password = "secret";
+
+        $conn = new \mysqli($ip, $username, $password);
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        $sql = "CREATE DATABASE ".$name;
+        if ($conn->query($sql) === TRUE) {
+//            echo "Database created successfully";
+        } else {
+//            echo "Error creating database: " . $conn->error;
+        }
+
+        $conn->close();
+
+
+        $parametersYml = $directory . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'parameters.yml';
+        if (file_exists($parametersYml)) {
+            $comment = "#Uberstead Config Hint#    ";
+            $fileContents = file($parametersYml);
+            foreach ($fileContents as $key => $line) {
+                if (strpos($line, $comment) !== false) {
+                    unset($fileContents[$key]);
+                }
+            }
+
+            $fileContents[] = $comment . "database_host: 127.0.0.1\n";
+            $fileContents[] = $comment . "database_port: 3306\n";
+            $fileContents[] = $comment . "database_name: ".$name."\n";
+            $fileContents[] = $comment . "database_user: homestead\n";
+            $fileContents[] = $comment . "database_password: secret\n";
+
+            $fileContents = implode("", $fileContents);
+            $fileContents = trim($fileContents, "\n")."\n";
+            file_put_contents($parametersYml, $fileContents);
+        }
+    }
+
     public function checkConfig(InputInterface $input, OutputInterface $output)
     {
         $command = new CheckConfigCommand();
