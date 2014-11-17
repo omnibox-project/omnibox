@@ -2,6 +2,7 @@
 
 domain="$1"
 webroot="$2"
+name="$3"
 
 root="/home/vagrant/$domain"
 webroot="$root/$webroot"
@@ -55,3 +56,6 @@ echo "$block" > "/etc/nginx/sites-available/$1"
 ln -fs "/etc/nginx/sites-available/$1" "/etc/nginx/sites-enabled/$1"
 service nginx restart
 service php5-fpm restart
+
+# Create MySQL DB
+mysql --user="root" --password="" -e "CREATE DATABASE IF NOT EXISTS $name;"
