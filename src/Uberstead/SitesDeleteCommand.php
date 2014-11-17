@@ -52,6 +52,7 @@ class SitesDeleteCommand extends BaseCommand
 
         $this->saveConfig($array);
 
+        $this->updateNfsShares($input, $output);
         $this->runProvision($input, $output);
     }
 }
