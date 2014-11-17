@@ -104,10 +104,13 @@ class SitesEditCommand extends BaseCommand
         $this->saveConfig($array);
         $this->setDbHintInParametersYml($array['sites'][$siteKey]['directory'], $array['sites'][$siteKey]['name'], $array['ip']);
 
-        $this->runProvision($input, $output);
+        $dumper = new Dumper();
+        $yaml = $dumper->dump($array, 3);
+        file_put_contents('uberstead.yaml', $yaml);
 
         if ($updateNfsShares) {
             $this->updateNfsShares($input, $output);
         }
+        $this->runProvision($input, $output);
     }
 }
