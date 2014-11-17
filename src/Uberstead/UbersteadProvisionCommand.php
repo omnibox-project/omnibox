@@ -52,7 +52,7 @@ class UbersteadProvisionCommand extends BaseCommand
 
         # Flush cache
         exec('dscacheutil -flushcache');
-        $output->writeln('<info>Running "vagrant reload"...</info>');
+        $output->writeln('<info>Running "vagrant provision"...</info>');
         $this->runCommandWithProgressBar($input, $output, 'su $SUDO_USER -c "vagrant provision"', 35);
     }
 }
