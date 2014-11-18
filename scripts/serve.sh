@@ -4,7 +4,7 @@ domain="$1"
 webroot="$2"
 name="$3"
 
-root="/home/vagrant/$domain"
+root="/home/vagrant/$name"
 webroot="$root/$webroot"
 
 block="server {

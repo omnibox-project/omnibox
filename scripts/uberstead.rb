@@ -57,7 +57,7 @@ class Uberstead
     # Install All The Configured Nginx Sites
     unless settings["sites"].nil? 
       settings["sites"].each do |site|
-        config.vm.synced_folder site["directory"], "/home/vagrant/" + site["domain"], type: site["type"] ||= settings["defaultfoldertype"] ||= nil
+        config.vm.synced_folder site["directory"], "/home/vagrant/" + site["name"], type: site["type"] ||= settings["defaultfoldertype"] ||= nil
         config.vm.provision "shell" do |s|
           s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3"
           s.args = [site["domain"], site["webroot"], site["name"]]
