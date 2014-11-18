@@ -1,9 +1,8 @@
 <?php
-namespace Uberstead;
+namespace Uberstead\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Yaml\Parser;
 
 class UbersteadSettingsCommand extends BaseCommand
 {

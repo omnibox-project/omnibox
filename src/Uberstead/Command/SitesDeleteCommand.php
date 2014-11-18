@@ -1,13 +1,11 @@
 <?php
-namespace Uberstead;
+namespace Uberstead\Command;
 
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Yaml\Dumper;
 
 class SitesDeleteCommand extends BaseCommand
 {

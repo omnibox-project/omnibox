@@ -1,5 +1,5 @@
 <?php
-namespace Uberstead;
+namespace Uberstead\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressHelper;
