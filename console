@@ -5,18 +5,20 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Console\Command\Command;
 use Uberstead\Command\BaseCommand;
 use Uberstead\Container\Container;
+use Uberstead\Service\ValidatorService;
 
 set_time_limit(0);
 require_once "vendor/autoload.php";
 
-//---------------------------
-// Setup Container
-//---------------------------
+/*
+ * Setup Container
+ */
 $container = new Container();
+$container['validator'] = new ValidatorService();
 
-//---------------------------
-// Load Commands
-//---------------------------
+/*
+ * Load Commands
+ */
 $finder = new Finder();
 $commandFiles = $finder->files()
     ->name('*Command.php')
