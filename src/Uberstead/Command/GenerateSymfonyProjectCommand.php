@@ -20,11 +20,15 @@ class GenerateSymfonyProjectCommand extends BaseCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->checkConfig($input, $output);
+        $array = $this->getConfig();
+
+        $validator = $this->getContainer()->getValidator();
+        $validator->setConfigArray($array);
 
         $array = array(
-            '1' => array('  1', 'Symfony Bootstrap Edition', 'https://github.com/phiamo/symfony-bootstrap'),
-            '2' => array('  2', 'Symfony REST Edition', 'https://github.com/gimler/symfony-rest-edition'),
-            '3' => array('  3', 'Symfony Standard Edition', 'https://github.com/symfony/symfony-standard'),
+            '1' => array('  1', 'Symfony Standard Edition', 'https://github.com/symfony/symfony-standard'),
+            '2' => array('  2', 'Symfony Bootstrap Edition', 'https://github.com/phiamo/symfony-bootstrap'),
+            '3' => array('  3', 'Symfony REST Edition', 'https://github.com/gimler/symfony-rest-edition'),
             '4' => array('  4', 'Symfony CMF Standard Edition', 'https://github.com/symfony-cmf/standard-edition'),
             '5' => array('  5', 'Symfony Sonata Distribution', 'https://github.com/jmather/symfony-sonata-distribution'),
             '6' => array('  6', 'Symfony KnpLabs RAD Edition', 'https://github.com/KnpLabs/rad-edition'),
@@ -38,49 +42,24 @@ class GenerateSymfonyProjectCommand extends BaseCommand
             ->setRows($array);
         $table->render($output);
 
-        $question = new Question('Choose your preferred Symfony2 flavor: [1] ', '1');
-        $question->setValidator(function ($answer) use ($array) {
-                if (!array_key_exists($answer, $array)) {
-                    throw new \RuntimeException(
-                        'Enter the choice number of your preferred Symfony2 distribution'
-                    );
-                }
-                return $answer;
-            });
         $helper = $this->getHelper('question');
-        $choice = $helper->ask($input, $output, $question);
+        $choice = $helper->ask($input, $output, $validator->createDistributionChoiceQuestion($array));
 
-        $question = new Question('Choose a project directory - it will be created for you: ');
-        $question->setValidator(
-            function ($answer) {
-                if (file_exists($answer)) {
-                    if (!count(scandir($answer)) == 2) {
-                        # Directory is not empty
-                        throw new \RuntimeException(
-                            'This folder is not empty. Try again.'
-                        );
-                    }
-                }
+        $site = $this->addSite($input, $output, null, null, 'web');
+        $directory = $site['directory'];
 
-                return $answer;
-            }
-        );
-        $directory = $helper->ask($input, $output, $question);
-
-        exec('su $SUDO_USER -c "mkdir -p '.$directory.'"');
         if (!file_exists('composer.phar')) {
             exec('su $SUDO_USER -c "curl -s https://getcomposer.org/installer | php"');
         }
 
-        $this->addSite($input, $output, null, $directory, 'web');
 
-        if ($choice == 1) { # Symfony Bootstrap Edition
+        if ($choice == 1) { # Install Symfony Standard Edition
+            $cmd = "php composer.phar create-project symfony/framework-standard-edition ".$directory." '2.5.*'";
+        } elseif ($choice == 2) { # Symfony Bootstrap Edition
             # Needs different installation
             die('Bootstrap edition is not supported yet...');
-        } elseif ($choice == 2) { # Install Symfony REST Edition
+        } elseif ($choice == 3) { # Install Symfony REST Edition
             $cmd = "php composer.phar create-project gimler/symfony-rest-edition --stability=dev ".$directory;
-        } elseif ($choice == 3) { # Install Symfony Standard Edition
-            $cmd = "php composer.phar create-project symfony/framework-standard-edition ".$directory." '2.5.*'";
         } elseif ($choice == 4) { # Install Symfony CMF Standard Edition
             $cmd = "php composer.phar create-project symfony-cmf/symfony-cmf-standard ".$directory;
         } elseif ($choice == 5) { # Install Symfony Sonata Distribution
@@ -94,15 +73,21 @@ class GenerateSymfonyProjectCommand extends BaseCommand
         $process = new Process('su $SUDO_USER -c "'.$cmd.'"');
         $process->setTimeout(null);
 
+        $output->writeln('<info>Running "'.$cmd.'"...</info>');
+        $output->writeln('[ This may take a minute ]');
+
         $process->run(function ($type, $buffer) use (&$output) {
                 if (Process::ERR === $type) {
                     $output->write('<error>'.$buffer.'</error>');
                 } else {
-                    $output->write('<info>'.$buffer.'</info>');
+                    //$output->write('<info>'.$buffer.'</info>');
                 }
             });
 
         $this->updateNfsShares($input, $output);
         $this->runProvision($input, $output);
+
+        $cmd = 'open http://'.$site['domain'].'/app_dev.php';
+        exec('su $SUDO_USER -c "'.$cmd.'"');
     }
 }
