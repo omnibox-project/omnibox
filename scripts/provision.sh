@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Install less
-npm install -g less
+npm install -g less@~1.7
 
 # Configure MySQL Access
 mysql --user="root" --password="secret" -e "UPDATE mysql.user SET Password='' WHERE User='root';" 2>/dev/null
