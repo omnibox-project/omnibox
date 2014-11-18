@@ -3,8 +3,8 @@
         "symfony/console": "~2.5",
         "psr/log": "~1.0",
         "symfony/finder": "~2.5",
-        "symfony/yaml": "2.*",
-        "symfony/process": "3.0.*@dev"
+        "symfony/yaml": "~2.5",
+        "symfony/process": "~2.5"
     },
     "autoload": {
         "psr-0": {
