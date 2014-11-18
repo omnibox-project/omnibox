@@ -10,9 +10,31 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Console\Question\Question;
+use Uberstead\Container\Container;
 
 class BaseCommand extends Command
 {
+    /**
+     * @var Container
+     */
+    private $container;
+
+    /**
+     * @param Container $container
+     */
+    public function setContainer($container)
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
     protected function checkConfig(InputInterface $input, OutputInterface $output)
     {
         if (posix_getuid() != 0) {
