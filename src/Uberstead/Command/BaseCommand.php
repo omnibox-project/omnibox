@@ -158,12 +158,14 @@ EOF;
 
     public function updateNfsShares(InputInterface $input, OutputInterface $output)
     {
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('<question>You have changed the shared directories. You need to run "vagrant reload" to apply the changes. Would you like to do it now? [y]</question>', true);
-        if ($helper->ask($input, $output, $question)) {
-            $output->writeln('<info>Running "vagrant reload"...</info>');
-            $this->runCommandWithProgressBar($input, $output, 'su $SUDO_USER -c "vagrant reload"', 30);
-        }
+        $output->writeln('<info>Running "vagrant reload"...</info>');
+        $this->runCommandWithProgressBar($input, $output, 'su $SUDO_USER -c "vagrant reload"', 30);
+//        $helper = $this->getHelper('question');
+//        $question = new ConfirmationQuestion('<question>You have changed the shared directories. You need to run "vagrant reload" to apply the changes. Would you like to do it now? [y]</question>', true);
+//        if ($helper->ask($input, $output, $question)) {
+//            $output->writeln('<info>Running "vagrant reload"...</info>');
+//            $this->runCommandWithProgressBar($input, $output, 'su $SUDO_USER -c "vagrant reload"', 30);
+//        }
     }
 
     public function runCommandWithProgressBar(InputInterface $input, OutputInterface $output, $command, $expectedLinesNum = 50)
@@ -223,22 +225,24 @@ EOF;
             $name = $helper->ask($input, $output, $validator->createSiteNameQuestion());
         }
 
-        $domain = $helper->ask($input, $output, $validator->createDomainQuestion());
+        $domain = $helper->ask($input, $output, $validator->createDomainQuestion($name));
 
         if ($directory === null) {
-            $directory = $helper->ask($input, $output, $validator->createDirectoryQuestion());
+            $directory = $helper->ask($input, $output, $validator->createDirectoryQuestion($name));
         }
 
         if ($webroot === null) {
             $webroot = $helper->ask($input, $output, $validator->createWebrootQuestion($directory));
         }
 
-        $array['sites'][] = [
+        $site = array(
             'name' => $name,
             'domain' => $domain,
             'directory' => $directory,
-            'webroot' => $webroot,
-        ];
+            'webroot' => $webroot
+        );
+
+        $array['sites'][] = $site;
 
         $this->saveConfig($array);
         $this->setDbHintInParametersYml($directory, $name, $array['ip']);
@@ -246,5 +250,7 @@ EOF;
         $dumper = new Dumper();
         $yaml = $dumper->dump($array, 3);
         file_put_contents('uberstead.yaml', $yaml);
+
+        return $site;
     }
 }
