@@ -7,3 +7,4 @@ uberstead.yaml
 /composer.lock
 /logs/
 /app/
+/ssh/

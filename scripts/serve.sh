@@ -61,10 +61,15 @@ service php5-fpm restart
 mysql --user="root" --password="" -e "CREATE DATABASE IF NOT EXISTS $name;"
 
 # Create shortcut in app/ for calling app/console for this site
-for f in $(ls "$root/bin/"); do
-    template="#!/bin/sh
+template="#!/bin/sh
 php console sites:console $3 -- \"\$*\"
 "
-    echo "$template" > "/vagrant/app/$3"
-    chmod a+x "/vagrant/app/$3"
-done
+echo "$template" > "/vagrant/app/$3"
+chmod a+x "/vagrant/app/$3"
+
+# Create shortcut in ssh/ for executing ssh commands for this site
+template="#!/bin/sh
+php console sites:ssh $3 -- \"\$*\"
+"
+echo "$template" > "/vagrant/ssh/$3"
+chmod a+x "/vagrant/ssh/$3"
