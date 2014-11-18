@@ -20,18 +20,6 @@ class SitesListCommand extends BaseCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->checkConfig($input, $output);
-
-        $array = $this->getConfig();
-
-        $table = $this->getHelper('table');
-        $table
-            ->setHeaders(array('Name', 'Domain', 'Directory', 'Web root'))
-            ->setRows($array['sites']);
-        $table->render($output);
-
-        if (count($array['sites']) === 0) {
-            $output->writeln("No sites have been added yet");
-        }
+        $this->getContainer()->getSiteManager()->listSites($input, $output, $this->getHelper('table'));
     }
 }

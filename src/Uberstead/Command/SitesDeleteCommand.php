@@ -19,38 +19,9 @@ class SitesDeleteCommand extends BaseCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->checkConfig($input, $output);
-
-        $array = $this->getConfig();
-
-        if (count($array['sites']) === 0) {
-            $output->writeln("No sites have been added yet");
-            die();
-        }
-
-        $sites = array();
-        foreach ($array['sites'] as $key => $site) {
-            $sites[] = $site['name'];
-        }
-
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion(
-            'Select the site you want to delete:',
-            $sites,
-            0
-        );
-        $question->setErrorMessage('The choise %s is invalid.');
-        $domain = $helper->ask($input, $output, $question);
-
-        foreach ($array['sites'] as $key => $site) {
-            if ($site['name'] === $domain) {
-                unset($array['sites'][$key]);
-            }
-        }
-
-        $this->saveConfig($array);
-
-        $this->updateNfsShares($input, $output);
-        $this->runProvision($input, $output);
+        $this->getContainer()->getSiteManager()->listSites($input, $output, $this->getHelper('table'), true);
+        $this->getContainer()->getSiteManager()->deleteSite($input, $output, $this->getHelper('question'));
+        $this->getContainer()->getProvisionService()->reload($input, $output, $this);
+        $this->getContainer()->getProvisionService()->provision($input, $output, $this);
     }
 }

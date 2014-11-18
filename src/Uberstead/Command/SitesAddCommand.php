@@ -20,9 +20,8 @@ class SitesAddCommand extends BaseCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->checkConfig($input, $output);
-        $this->addSite($input, $output);
-        $this->updateNfsShares($input, $output);
-        $this->runProvision($input, $output);
+        $this->getContainer()->getSiteManager()->addSite($input, $output, $this->getHelper('question'));
+        $this->getContainer()->getProvisionService()->reload($input, $output, $this);
+        $this->getContainer()->getProvisionService()->provision($input, $output, $this);
     }
 }

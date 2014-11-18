@@ -16,6 +16,6 @@ class UbersteadSettingsCommand extends BaseCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->checkConfig($input, $output);
+        // Settings are checked every time through the event dispatcher
     }
 }
