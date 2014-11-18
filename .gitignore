@@ -2,7 +2,8 @@
 /.idea
 uberstead.yaml
 .DS_Store
-/vendor/*
+/vendor/
 /composer.phar
 /composer.lock
-/logs/*
+/logs/
+/app/
