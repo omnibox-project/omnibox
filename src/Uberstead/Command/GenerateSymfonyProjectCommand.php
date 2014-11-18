@@ -26,6 +26,9 @@ class GenerateSymfonyProjectCommand extends BaseCommand
             '2' => array('  2', 'Symfony REST Edition', 'https://github.com/gimler/symfony-rest-edition'),
             '3' => array('  3', 'Symfony Standard Edition', 'https://github.com/symfony/symfony-standard'),
             '4' => array('  4', 'Symfony CMF Standard Edition', 'https://github.com/symfony-cmf/standard-edition'),
+            '5' => array('  5', 'Symfony Sonata Distribution', 'https://github.com/jmather/symfony-sonata-distribution'),
+            '6' => array('  6', 'Symfony KnpLabs RAD Edition', 'https://github.com/KnpLabs/rad-edition'),
+            '7' => array('  7', 'Symfony Rapid Development Edition', 'https://github.com/rgies/symfony'),
         );
 
         /** @var TableHelper $table */
@@ -78,8 +81,14 @@ class GenerateSymfonyProjectCommand extends BaseCommand
             $cmd = "php composer.phar create-project gimler/symfony-rest-edition --stability=dev ".$directory;
         } elseif ($choice == 3) { # Install Symfony Standard Edition
             $cmd = "php composer.phar create-project symfony/framework-standard-edition ".$directory." '2.5.*'";
-        }elseif ($choice == 4) { # Install Symfony CMF Standard Edition
+        } elseif ($choice == 4) { # Install Symfony CMF Standard Edition
             $cmd = "php composer.phar create-project symfony-cmf/symfony-cmf-standard ".$directory;
+        } elseif ($choice == 5) { # Install Symfony Sonata Distribution
+            $cmd = "php composer.phar create-project -s dev jmather/symfony-sonata-distribution ".$directory;
+        } elseif ($choice == 6) { # Install Symfony KnpLabs RAD Edition
+            $cmd = "php composer.phar create-project -s dev --prefer-dist --dev knplabs/rad-edition ".$directory;
+        } elseif ($choice == 7) { # Install Symfony KnpLabs RAD Edition
+            $cmd = "php composer.phar create-project -s dev rgies/symfony ".$directory;
         }
 
         $process = new Process('su $SUDO_USER -c "'.$cmd.'"');
