@@ -32,40 +32,50 @@ class ValidatorService
         $sites = $array['sites'];
         $siteNames = array_map(function ($x) { return $x['name']; }, $sites);
 
-        $question = new Question('Assign a name for the site (allowed characters a-z0-9-_): ');
+        $question = new Question('Assign a name for the site (allowed characters a-z0-9-): ');
         $validator = $this;
         $question->setValidator(function ($answer) use ($siteNames, $validator) {
-                return $validator->validateSite($answer, $siteNames);
+                return $validator->validateName($answer, $siteNames);
             });
 
         return $question;
     }
 
-    public function validateSite($site, $siteNames)
+    public function validateName($name, $siteNames)
     {
-        if (strlen(trim($site)) === 0) {
+        if (strlen(trim($name)) === 0) {
             throw new \RuntimeException(
                 'You need to provide a name for this site!'
             );
-        } elseif (in_array($site, $siteNames)) {
+        } elseif (in_array($name, $siteNames)) {
             throw new \RuntimeException(
                 'There is already a site with this name!'
             );
         }
 
-        return $site;
+        $name = str_replace(" ", "-", $name);
+        $name = strtolower(preg_replace("/[^a-zA-Z0-9-]+/", "", $name));
+
+        return $name;
     }
 
     /**
      * @return Question
      */
-    public function createDomainQuestion()
+    public function createDomainQuestion($projectName)
     {
         $array = $this->getConfigArray();
         $sites = $array['sites'];
         $domains = array_map(function ($x) { return $x['domain']; }, $sites);
 
-        $question = new Question('Domain (www.exampe.dev): ');
+        $question = new Question('Choose a domain: [www.'.$projectName.'.dev] ', 'www.'.$projectName.'.dev');
+        $question->setAutocompleterValues(array(
+                'www.'.$projectName.'.dev',
+                $projectName.'.dev',
+                'local.'.$projectName.'.com',
+                'www.'.$projectName.'.com',
+                $projectName.'.com',
+            ));
         $validator = $this;
         $question->setValidator(function ($answer) use ($domains, $validator) {
                 return $validator->validateDomain($answer, $domains);
@@ -94,7 +104,7 @@ class ValidatorService
     /**
      * @return Question
      */
-    public function createDirectoryQuestion()
+    public function createDirectoryQuestion($projectName)
     {
         $array = $this->getConfigArray();
         $sites = $array['sites'];
@@ -106,7 +116,11 @@ class ValidatorService
 //            $defaultDirectory = DIRECTORY_SEPARATOR . $name;
 //        }
 
-        $question = new Question('Directory (/some/example/folder): ');
+        $question = new Question('Choose a project directory - it will be created if it doesn\'t exist: ['.$_SERVER['HOME'] . DIRECTORY_SEPARATOR . 'Projects' . DIRECTORY_SEPARATOR . $projectName.'] ', $_SERVER['HOME'] . DIRECTORY_SEPARATOR . 'Projects' . DIRECTORY_SEPARATOR . $projectName);
+        $question->setAutocompleterValues(array(
+                $_SERVER['HOME'] . DIRECTORY_SEPARATOR . $projectName,
+                $_SERVER['HOME'] . DIRECTORY_SEPARATOR . 'Projects' . DIRECTORY_SEPARATOR . $projectName,
+            ));
         $validator = $this;
         $question->setValidator(
             function ($answer) use ($directories, $validator) {
@@ -119,15 +133,21 @@ class ValidatorService
 
     public function validateDirectory($directory, $directories)
     {
-        if (!file_exists($directory)) {
-            throw new \RuntimeException(
-                'The folder does not exist. Try again.'
-            );
-        } elseif (in_array($directory, $directories)) {
+        if (in_array($directory, $directories)) {
             throw new \RuntimeException(
                 'There is already a site with this directory!'
             );
+        } elseif (file_exists($directory)) {
+            if (!(count(scandir($directory)) == 2)) {
+                # Directory is not empty
+                throw new \RuntimeException(
+                    'This directory is not empty. Try again.'
+                );
+            }
+            exec('su $SUDO_USER -c "mkdir -p '.$directory.'"');
+        echo count(scandir($directory))."\n";
         }
+
 
         return $directory;
     }
@@ -140,6 +160,24 @@ class ValidatorService
                 if (!file_exists($directory. DIRECTORY_SEPARATOR . $answer)) {
                     throw new \RuntimeException(
                         'The folder does not exist. Try again.'
+                    );
+                }
+
+                return $answer;
+            }
+        );
+
+        return $question;
+    }
+
+    public function createDistributionChoiceQuestion($choices)
+    {
+        $question = new Question('Choose your preferred Symfony2 flavor: [1] ', '1');
+        $question->setValidator(
+            function ($answer) use ($choices) {
+                if (!array_key_exists($answer, $choices)) {
+                    throw new \RuntimeException(
+                        'Enter the choice number of your preferred Symfony2 distribution'
                     );
                 }
 
