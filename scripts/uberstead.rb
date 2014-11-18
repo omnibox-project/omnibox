@@ -45,17 +45,13 @@ class Uberstead
     end
 
     # Copy The Bash Aliases
-    config.vm.provision "shell" do |s|
-      s.inline = "cp /vagrant/aliases /home/vagrant/.bash_aliases"
-    end
+    config.vm.provision "shell", inline: "cp /vagrant/aliases /home/vagrant/.bash_aliases"
 
     # Install extra stuff
-    config.vm.provision "shell" do |s|
-      s.inline = "sh /vagrant/scripts/provision.sh"
-    end
+    config.vm.provision "shell", inline: "sh /vagrant/scripts/provision.sh"
 
     # Install All The Configured Nginx Sites
-    unless settings["sites"].nil? 
+    unless settings["sites"].nil?
       settings["sites"].each do |site|
         config.vm.synced_folder site["directory"], "/home/vagrant/" + site["name"], type: site["type"] ||= settings["defaultfoldertype"] ||= nil
         config.vm.provision "shell" do |s|
