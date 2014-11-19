@@ -2,25 +2,34 @@
 namespace Uberstead\Service;
 
 use Symfony\Component\Console\Question\Question;
+use Uberstead\Service\ConfigManagerService;
 
 class ValidatorService
 {
-    var $configArray = array();
-
     /**
-     * @return array
+     * @var ConfigManagerService
      */
-    public function getConfigArray()
+    var $configManager;
+
+    function __construct($configManager)
     {
-        return $this->configArray;
+        $this->configManager = $configManager;
     }
 
     /**
-     * @param array $configArray
+     * @return ConfigManagerService
      */
-    public function setConfigArray($configArray)
+    public function getConfigManager()
     {
-        $this->configArray = $configArray;
+        return $this->configManager;
+    }
+
+    /**
+     * @param ConfigManagerService $configManager
+     */
+    public function setConfigManager($configManager)
+    {
+        $this->configManager = $configManager;
     }
 
     /**
@@ -28,11 +37,9 @@ class ValidatorService
      */
     public function createSiteNameQuestion()
     {
-        $array = $this->getConfigArray();
-        $sites = $array['sites'];
-        $siteNames = array_map(function ($x) { return $x['name']; }, $sites);
+        $siteNames = $this->getConfigManager()->getSiteAttributeList('name');
 
-        $question = new Question('Assign a name for the site (allowed characters a-z0-9-): ');
+        $question = new Question('Assign a name for this project: ');
         $validator = $this;
         $question->setValidator(function ($answer) use ($siteNames, $validator) {
                 return $validator->validateName($answer, $siteNames);
@@ -64,9 +71,7 @@ class ValidatorService
      */
     public function createDomainQuestion($projectName)
     {
-        $array = $this->getConfigArray();
-        $sites = $array['sites'];
-        $domains = array_map(function ($x) { return $x['domain']; }, $sites);
+        $domains = $this->getConfigManager()->getSiteAttributeList('domain');
 
         $question = new Question('Choose a domain: [www.'.$projectName.'.dev] ', 'www.'.$projectName.'.dev');
         $question->setAutocompleterValues(array(
@@ -106,9 +111,7 @@ class ValidatorService
      */
     public function createDirectoryQuestion($projectName)
     {
-        $array = $this->getConfigArray();
-        $sites = $array['sites'];
-        $directories = array_map(function ($x) { return $x['directory']; }, $sites);
+        $directories = $this->getConfigManager()->getSiteAttributeList('directory');
 
 //        if (isset($_SERVER['HOME'])) {
 //            $defaultDirectory = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . $name;
@@ -139,15 +142,13 @@ class ValidatorService
             );
         } elseif (file_exists($directory)) {
             if (!(count(scandir($directory)) == 2)) {
-                # Directory is not empty
-                throw new \RuntimeException(
-                    'This directory is not empty. Try again.'
-                );
+//                Directory is not empty
+//                throw new \RuntimeException(
+//                    'This directory is not empty. Try again.'
+//                );
             }
-            exec('su $SUDO_USER -c "mkdir -p '.$directory.'"');
-        echo count(scandir($directory))."\n";
         }
-
+        exec('su $SUDO_USER -c "mkdir -p '.$directory.'"');
 
         return $directory;
     }

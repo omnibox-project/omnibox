@@ -19,12 +19,6 @@ class GenerateSymfonyProjectCommand extends BaseCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->checkConfig($input, $output);
-        $array = $this->getConfig();
-
-        $validator = $this->getContainer()->getValidator();
-        $validator->setConfigArray($array);
-
         $array = array(
             '1' => array('  1', 'Symfony Standard Edition', 'https://github.com/symfony/symfony-standard'),
             '2' => array('  2', 'Symfony Bootstrap Edition', 'https://github.com/phiamo/symfony-bootstrap'),
@@ -35,6 +29,7 @@ class GenerateSymfonyProjectCommand extends BaseCommand
             '7' => array('  7', 'Symfony Rapid Development Edition', 'https://github.com/rgies/symfony'),
         );
 
+        $validator = $this->getContainer()->getValidator();
         /** @var TableHelper $table */
         $table = $this->getHelper('table');
         $table
@@ -45,13 +40,19 @@ class GenerateSymfonyProjectCommand extends BaseCommand
         $helper = $this->getHelper('question');
         $choice = $helper->ask($input, $output, $validator->createDistributionChoiceQuestion($array));
 
-        $site = $this->addSite($input, $output, null, null, 'web');
-        $directory = $site['directory'];
+        $site = $this->getContainer()->getSiteManager()->addSite($input, $output, $this->getHelper('question'), null, null, 'web');
+        $directory = $site->getDirectory();
+
+        if (!(count(scandir($directory)) == 2)) {
+            //Directory is not empty
+            throw new \RuntimeException(
+                'This directory is not empty. Try again.'
+            );
+        }
 
         if (!file_exists('composer.phar')) {
             exec('su $SUDO_USER -c "curl -s https://getcomposer.org/installer | php"');
         }
-
 
         if ($choice == 1) { # Install Symfony Standard Edition
             $cmd = "php composer.phar create-project symfony/framework-standard-edition ".$directory." '2.5.*'";
@@ -84,10 +85,10 @@ class GenerateSymfonyProjectCommand extends BaseCommand
                 }
             });
 
-        $this->updateNfsShares($input, $output);
-        $this->runProvision($input, $output);
+        $this->vagrantReload($output);
+        $this->vagrantProvision($output);
 
         $cmd = 'open http://'.$site['domain'].'/app_dev.php';
-        exec('su $SUDO_USER -c "'.$cmd.'"');
+        $this->setCommandForTerminateEvent('su $SUDO_USER -c "'.$cmd.'"');
     }
 }

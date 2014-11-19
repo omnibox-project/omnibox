@@ -6,6 +6,12 @@ use Symfony\Component\Console\Command\Command;
 use Uberstead\Command\BaseCommand;
 use Uberstead\Container\Container;
 use Uberstead\Service\ValidatorService;
+use Symfony\Component\Console\Event\ConsoleCommandEvent;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Uberstead\Service\ConfigManagerService;
+use Uberstead\Service\SiteManagerService;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 
 set_time_limit(0);
 require_once "vendor/autoload.php";
@@ -14,7 +20,9 @@ require_once "vendor/autoload.php";
  * Setup Container
  */
 $container = new Container();
-$container['validator'] = new ValidatorService();
+$container['config_manager'] = new ConfigManagerService();
+$container['validator'] = new ValidatorService($container['config_manager']);
+$container['site_manager'] = new SiteManagerService($container['config_manager'], $container['validator']);
 
 /*
  * Load Commands
@@ -23,19 +31,65 @@ $finder = new Finder();
 $commandFiles = $finder->files()
     ->name('*Command.php')
     ->notName('*BaseCommand.php')
-    ->notName('CheckConfigCommand.php')
     ->in('src')
 ;
+
+/*
+ * Setup event dispatcher
+ */
+$dispatcher = new EventDispatcher();
+$dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
+        $input = $event->getInput();
+        $output = $event->getOutput();
+
+        if (posix_getuid() != 0) {
+            $output->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
+            die();
+        }
+
+        /** @var BaseCommand $command */
+        $command = $event->getCommand();
+        if ($command instanceof BaseCommand) {
+            // Force settings update if the settingscommand is executed
+            $forceUpdate = ($command->getName() === "uberstead:settings");
+
+            // If checkConfig returns true (settings are updated), refresh vagrant
+            if (true === $command->getContainer()->getConfigManager()->checkConfig($input, $output, $command->getHelperSet(), $forceUpdate)) {
+                $command->queueVagrantReload();
+                $command->queueVagrantProvision();
+            }
+        }
+    });
+
+$dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) {
+        /** @var BaseCommand $command */
+        $command = $event->getCommand();
+        $output = $event->getOutput();
+
+        if ($command instanceof BaseCommand) {
+            if ($command->isQueueVagrantProvision()) {
+                $command->vagrantProvision($output);
+            }
+            if ($command->isQueueVagrantReload()) {
+                $command->vagrantReload($output);
+            }
+            if ($command->getCommandForTerminateEvent() !== null) {
+                exec($command->getCommandForTerminateEvent());
+            }
+        }
+    });
+
 
 $commands = array();
 foreach ($commandFiles as $file) {
     if (preg_match('#^namespace\s+(.+?);.*class\s+(\w+).+;$#sm', $file->getContents(), $m)) {
         $class = $m[1].'\\'.$m[2];
         $object = new $class();
-        if ($object instanceof BaseCommand) {
-            /** @var BaseCommand $object */
+        if ($object instanceof Command) {
             $commands[] = $object;
-            $object->setContainer($container);
+            if (method_exists($object, 'setContainer')) {
+                $object->setContainer($container);
+            }
         }
     }
 }
@@ -44,5 +98,6 @@ foreach ($commandFiles as $file) {
 // Run Application
 //---------------------------
 $console = new Application();
+$console->setDispatcher($dispatcher);
 $console->addCommands($commands);
 $console->run();
