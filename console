@@ -54,7 +54,7 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
             $forceUpdate = ($command->getName() === "uberstead:settings");
 
             // If checkConfig returns true (settings are updated), refresh vagrant
-            if (true === $command->getContainer()->getConfigManager()->checkConfig($input, $output, $command->getHelperSet(), $forceUpdate)) {
+            if (true === $command->getContainer()->getConfigManager()->updateConfig($input, $output, $command->getHelperSet(), $forceUpdate)) {
                 $command->queueVagrantReload();
                 $command->queueVagrantProvision();
             }

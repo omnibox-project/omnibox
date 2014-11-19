@@ -44,7 +44,7 @@ class ConfigManagerService
         $this->config = new Config($array);
     }
 
-    public function checkConfig(InputInterface $input, OutputInterface $output, HelperSet $helperSet, $skipSettingsfileCheck = false)
+    public function updateConfig(InputInterface $input, OutputInterface $output, HelperSet $helperSet, $skipSettingsfileCheck = false)
     {
         exec('echo ~', $out);
         if (!file_exists($out[0].'/.ssh/id_rsa.pub')) {
