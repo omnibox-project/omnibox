@@ -102,6 +102,19 @@ class BaseCommand extends Command
 
     public function vagrantReload(OutputInterface $output)
     {
+        // Remove folders that doesn't exist
+        $filename = '/etc/exports';
+        $fileContents = file($filename);
+        foreach ($fileContents as $key => $line) {
+            if (strpos($line, '-alldirs') !== false) {
+                preg_match_all('/"([^"]+)"/', $line, $matches);
+                if (!file_exists($matches[1][0])) {
+                    unset($fileContents[$key]);
+                }
+            }
+        }
+        file_put_contents($filename, implode("", $fileContents));
+
         $output->writeln('<info>Running "vagrant reload"...</info>');
         $this->runCommandWithProgressBar($output, 'su $SUDO_USER -c "vagrant reload"');
     }
