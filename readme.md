@@ -43,3 +43,7 @@ See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 - Edit, don't only add hints in, parameters.yml when generating a new project
 - Run initail setup (settings) command after composer has installed for the first time
 - Clear /etc/exports from non existing folders before running vagrant reload to prevent errors
+- Confirm delete project, ask if project files should be removed as well
+- Validate config input for IP, memory and cpus
+- Ask if doctrine migrations should be migrated when settings up a new project with migrations
+- Dont just check if config exists, check validate its contents and generate a new if there are any errors

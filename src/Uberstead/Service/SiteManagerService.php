@@ -65,7 +65,6 @@ class SiteManagerService
 
         if (count($siteList) === 0) {
             $output->writeln("No sites have been added yet");
-            die();
         }
     }
 

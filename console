@@ -11,6 +11,7 @@ use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Uberstead\Service\ConfigManagerService;
 use Uberstead\Service\SiteManagerService;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 
 set_time_limit(0);
 require_once "vendor/autoload.php";
@@ -21,7 +22,6 @@ require_once "vendor/autoload.php";
 $container = new Container();
 $container['config_manager'] = new ConfigManagerService();
 $container['validator'] = new ValidatorService($container['config_manager']);
-$container['provision_service'] = new \Uberstead\Service\ProvisionService($container['config_manager']);
 $container['site_manager'] = new SiteManagerService($container['config_manager'], $container['validator']);
 
 /*
@@ -50,7 +50,32 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
         /** @var BaseCommand $command */
         $command = $event->getCommand();
         if ($command instanceof BaseCommand) {
-            $command->getContainer()->getConfigManager()->checkConfig($input, $output);
+            // Force settings update if the settingscommand is executed
+            $forceUpdate = ($command->getName() === "uberstead:settings");
+
+            // If checkConfig returns true (settings are updated), refresh vagrant
+            if (true === $command->getContainer()->getConfigManager()->checkConfig($input, $output, $command->getHelperSet(), $forceUpdate)) {
+                $command->queueVagrantReload();
+                $command->queueVagrantProvision();
+            }
+        }
+    });
+
+$dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) {
+        /** @var BaseCommand $command */
+        $command = $event->getCommand();
+        $output = $event->getOutput();
+
+        if ($command instanceof BaseCommand) {
+            if ($command->isQueueVagrantProvision()) {
+                $command->vagrantProvision($output);
+            }
+            if ($command->isQueueVagrantReload()) {
+                $command->vagrantReload($output);
+            }
+            if ($command->getCommandForTerminateEvent() !== null) {
+                exec($command->getCommandForTerminateEvent());
+            }
         }
     });
 

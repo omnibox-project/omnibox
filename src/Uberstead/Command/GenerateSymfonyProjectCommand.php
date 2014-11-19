@@ -85,10 +85,10 @@ class GenerateSymfonyProjectCommand extends BaseCommand
                 }
             });
 
-        $this->updateNfsShares($input, $output);
-        $this->runProvision($input, $output);
+        $this->vagrantReload($output);
+        $this->vagrantProvision($output);
 
         $cmd = 'open http://'.$site['domain'].'/app_dev.php';
-        exec('su $SUDO_USER -c "'.$cmd.'"');
+        $this->setCommandForTerminateEvent('su $SUDO_USER -c "'.$cmd.'"');
     }
 }

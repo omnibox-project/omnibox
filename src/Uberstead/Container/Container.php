@@ -5,7 +5,6 @@ use Pimple\Container as PimpleContainer;
 use Uberstead\Service\ValidatorService;
 use Uberstead\Service\ConfigManagerService;
 use Uberstead\Service\SiteManagerService;
-use Uberstead\Service\ProvisionService;
 
 class Container extends PimpleContainer
 {
@@ -31,13 +30,5 @@ class Container extends PimpleContainer
     public function getSiteManager()
     {
         return $this['site_manager'];
-    }
-
-    /**
-     * @return ProvisionService
-     */
-    public function getProvisionService()
-    {
-        return $this['provision_service'];
     }
 }
