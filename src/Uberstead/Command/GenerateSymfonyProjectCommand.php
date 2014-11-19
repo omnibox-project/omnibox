@@ -88,7 +88,7 @@ class GenerateSymfonyProjectCommand extends BaseCommand
         $this->vagrantReload($output);
         $this->vagrantProvision($output);
 
-        $cmd = 'open http://'.$site['domain'].'/app_dev.php';
+        $cmd = 'open http://'.$site->getDomain().'/app_dev.php';
         $this->setCommandForTerminateEvent('su $SUDO_USER -c "'.$cmd.'"');
     }
 }
