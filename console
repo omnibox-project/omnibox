@@ -21,6 +21,25 @@ require_once "vendor/autoload.php";
  */
 $container = new Container();
 
+$parameters = array(
+    'path_to_hosts_file' => '/etc/hosts',
+    'path_to_exports_file' => '/etc/exports',
+    'path_to_public_key_file' => $_SERVER['HOME'].'/.ssh/id_rsa.pub',
+    'system_user' => get_current_user(),
+    'path_to_config_file' => 'uberstead.yaml',
+    'default_config_values' => array(
+        'ip' => '192.168.10.10',
+        'memory' => '2048',
+        'cpus' => '1',
+        'defaultfoldertype' => 'nfs',
+        'authorize' => '~/.ssh/id_rsa.pub',
+        'keys' => array('~/.ssh/id_rsa'),
+        'sites' => array(),
+    )
+);
+
+$container['parameters'] = $parameters;
+
 $container['config_manager'] = new ConfigManager();
 $container['config_manager']->setContainer($container);
 

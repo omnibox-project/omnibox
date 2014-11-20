@@ -31,4 +31,13 @@ class Container extends PimpleContainer
     {
         return $this['site_manager'];
     }
+
+    /**
+     * @param $parameter
+     * @return mixed
+     */
+    public function getParameter($parameter)
+    {
+        return $this['parameters'][$parameter];
+    }
 }
