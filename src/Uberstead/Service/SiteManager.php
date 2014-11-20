@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Parser;
 use Uberstead\Container\ContainerAwareTrait;
 use Uberstead\Model\Site;
 
-class SiteManagerService
+class SiteManager
 {
     use ContainerAwareTrait;
 

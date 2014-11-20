@@ -2,14 +2,14 @@
 namespace Uberstead\Container;
 
 use Pimple\Container as PimpleContainer;
-use Uberstead\Service\ValidatorService;
-use Uberstead\Service\ConfigManagerService;
-use Uberstead\Service\SiteManagerService;
+use Uberstead\Service\Validator;
+use Uberstead\Service\ConfigManager;
+use Uberstead\Service\SiteManager;
 
 class Container extends PimpleContainer
 {
     /**
-     * @return ValidatorService
+     * @return Validator
      */
     public function getValidator()
     {
@@ -17,7 +17,7 @@ class Container extends PimpleContainer
     }
 
     /**
-     * @return ConfigManagerService
+     * @return ConfigManager
      */
     public function getConfigManager()
     {
@@ -25,7 +25,7 @@ class Container extends PimpleContainer
     }
 
     /**
-     * @return SiteManagerService
+     * @return SiteManager
      */
     public function getSiteManager()
     {

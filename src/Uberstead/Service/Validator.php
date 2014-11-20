@@ -2,10 +2,9 @@
 namespace Uberstead\Service;
 
 use Symfony\Component\Console\Question\Question;
-use Uberstead\Service\ConfigManager;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class ValidatorService
+class Validator
 {
     use \Uberstead\Container\ContainerAwareTrait;
 

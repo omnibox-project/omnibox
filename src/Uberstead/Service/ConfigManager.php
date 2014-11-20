@@ -12,7 +12,7 @@ use Uberstead\Model\Site;
 use Uberstead\Model\Config;
 use Uberstead\Container\ContainerAwareTrait;
 
-class ConfigManagerService
+class ConfigManager
 {
     use ContainerAwareTrait;
 
