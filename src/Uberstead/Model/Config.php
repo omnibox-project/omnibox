@@ -5,53 +5,47 @@ use Uberstead\Model\Site;
 
 class Config
 {
-    var $ip = '192.168.10.10';
-    var $memory = '2048';
-    var $cpus = '1';
-    var $authorize = '~/.ssh/id_rsa.pub';
-    var $keys = array();
-    var $defaultfoldertype = 'nfs';
-    var $sites = array();
+    private $ip;
+    private $memory;
+    private $cpus;
+    private $authorize;
+    private $defaultfoldertype;
+    private $keys = array();
+    private $sites = array();
 
-    function __construct($array = null)
+    public function __construct($array = null)
     {
-        if ($array !== null) {
-            if (isset($array['sites'])) {
-                foreach ($array['sites'] as $s) {
-                    $site = new Site($s['name'], $s['domain'], $s['directory'], $s['webroot']);
-                    $this->addSite($site);
-                }
-            } else {
-                $this->setSites(array());
+        if (isset($array['sites'])) {
+            foreach ($array['sites'] as $s) {
+                $site = new Site($s['name'], $s['domain'], $s['directory'], $s['webroot']);
+                $this->addSite($site);
             }
+        }
 
-            if (isset($array['keys'])) {
-                foreach ($array['keys'] as $key) {
-                    $this->addKey($key);
-                }
-            } else {
-                $this->setKeys(array('~/.ssh/id_rsa'));
+        if (isset($array['keys'])) {
+            foreach ($array['keys'] as $key) {
+                $this->addKey($key);
             }
+        }
 
-            if (isset($array['ip'])) {
-                $this->setIp($array['ip']);
-            }
+        if (isset($array['ip'])) {
+            $this->setIp($array['ip']);
+        }
 
-            if (isset($array['memory'])) {
-                $this->setMemory($array['memory']);
-            }
+        if (isset($array['memory'])) {
+            $this->setMemory($array['memory']);
+        }
 
-            if (isset($array['cpus'])) {
-                $this->setCpus($array['cpus']);
-            }
+        if (isset($array['cpus'])) {
+            $this->setCpus($array['cpus']);
+        }
 
-            if (isset($array['authorize'])) {
-                $this->setAuthorize($array['authorize']);
-            }
+        if (isset($array['authorize'])) {
+            $this->setAuthorize($array['authorize']);
+        }
 
-            if (isset($array['defaultfoldertype'])) {
-                $this->setDefaultfoldertype($array['defaultfoldertype']);
-            }
+        if (isset($array['defaultfoldertype'])) {
+            $this->setDefaultfoldertype($array['defaultfoldertype']);
         }
     }
 

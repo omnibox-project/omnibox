@@ -8,6 +8,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
+use Uberstead\Container\Container;
 use Uberstead\Model\Site;
 use Uberstead\Model\Config;
 use Uberstead\Container\ContainerAwareTrait;
@@ -16,12 +17,28 @@ class ConfigManager
 {
     use ContainerAwareTrait;
 
-    private $configFileName = 'uberstead.yaml';
-
     /**
      * @var Config
      */
-    private $config;
+    private $config = null;
+
+    /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        if ($this->config === null) {
+            $yaml = new Parser();
+            if (file_exists($this->getContainer()->getParameter('path_to_config_file'))) {
+                $array = $yaml->parse(file_get_contents($this->getContainer()->getParameter('path_to_config_file')));
+            } else {
+                $array = $this->getContainer()->getParameter('default_config_values');
+            }
+            $this->config = new Config($array);
+        }
+
+        return $this->config;
+    }
 
     /**
      * @param Site $site
@@ -36,32 +53,20 @@ class ConfigManager
         return array_map(function ($x) use ($attribute) { return $x[$attribute]; }, $this->getConfig()->getSitesArray());
     }
 
-    function __construct()
-    {
-        $yaml = new Parser();
-        if (file_exists($this->getConfigFileName())) {
-            $array = $yaml->parse(file_get_contents($this->getConfigFileName()));
-        } else {
-            $array = array();
-        }
-        $this->config = new Config($array);
-    }
-
     public function updateConfig(InputInterface $input, OutputInterface $output, HelperSet $helperSet, $skipSettingsfileCheck = false)
     {
-        exec('echo ~', $out);
-        if (!file_exists($out[0].'/.ssh/id_rsa.pub')) {
+        if (!file_exists($this->getContainer()->getParameter('path_to_public_key_file'))) {
             $output->writeln('It seems like you don\'t have any SSH keys. Run <question>ssh-keygen -t rsa -C "your_email@example.com"</question> to generate keys.');
             die();
         }
 
-        if ($skipSettingsfileCheck === true || file_exists($this->getConfigFileName()) === false) {
+        if ($skipSettingsfileCheck === true || file_exists($this->getContainer()->getParameter('path_to_config_file')) === false) {
             $output->writeln('<info>>>> Configurate Server <<<</info>');
 
             if ($skipSettingsfileCheck) {
                 $ask = '<question>This will update your server settings. Continue? [y]</question>';
             } else {
-                $ask = '<question>'.$this->getConfigFileName().' does not exist! Would you like to generate it? [y]</question>';
+                $ask = '<question>'.$this->getContainer()->getParameter('path_to_config_file').' does not exist! Would you like to generate it? [y]</question>';
             }
 
             $helper = $helperSet->get('question');
@@ -103,11 +108,10 @@ class ConfigManager
     {
         $dumper = new Dumper();
         $yaml = $dumper->dump($this->getConfig()->toArray(), 3);
-        file_put_contents($this->getConfigFileName(), $yaml);
+        file_put_contents($this->getContainer()->getParameter('path_to_config_file'), $yaml);
 
-        exec('echo ~', $out);
-        chmod($this->getConfigFileName(), 0664);
-        chown($this->getConfigFileName(), end(explode('/', $out[0])));
+        chmod($this->getContainer()->getParameter('path_to_config_file'), 0664);
+        chown($this->getContainer()->getParameter('path_to_config_file'), $this->getContainer()->getParameter('system_user'));
     }
 
     public function setDbHintInParametersYml(Site $site)
@@ -145,29 +149,5 @@ class ConfigManager
                 $this->getSiteAttributeList('domain')
             )
         );
-    }
-
-    /**
-     * @return Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param Config $config
-     */
-    public function setConfig($config)
-    {
-        $this->config = $config;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getConfigFileName()
-    {
-        return $this->configFileName;
     }
 }
