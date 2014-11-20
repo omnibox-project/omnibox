@@ -5,9 +5,36 @@ use Pimple\Container as PimpleContainer;
 use Uberstead\Service\Validator;
 use Uberstead\Service\ConfigManager;
 use Uberstead\Service\SiteManager;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\HelperSet;
 
 class Container extends PimpleContainer
 {
+    /**
+     * @return HelperSet
+     */
+    public function getHelperSet()
+    {
+        return $this['helper_set'];
+    }
+
+    /**
+     * @return InputInterface
+     */
+    public function getInputInterface()
+    {
+        return $this['input_interface'];
+    }
+
+    /**
+     * @return OutputInterface
+     */
+    public function getOutputInterface()
+    {
+        return $this['output_interface'];
+    }
+
     /**
      * @return Validator
      */

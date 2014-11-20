@@ -63,23 +63,27 @@ $commandFiles = $finder->files()
  * Setup event dispatcher
  */
 $dispatcher = new EventDispatcher();
-$dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
+$dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($container) {
+        /** @var BaseCommand $command */
         $input = $event->getInput();
         $output = $event->getOutput();
+        $command = $event->getCommand();
+
+        $container['output_interface'] = $output;
+        $container['input_interface'] = $input;
+        $container['helper_set'] = $command->getHelperSet();
 
         if (posix_getuid() != 0) {
             $output->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
             die();
         }
 
-        /** @var BaseCommand $command */
-        $command = $event->getCommand();
         if ($command instanceof BaseCommand) {
             // Force settings update if the settingscommand is executed
             $forceUpdate = ($command->getName() === "uberstead:settings");
 
             // If checkConfig returns true (settings are updated), refresh vagrant
-            if (true === $command->getContainer()->getConfigManager()->updateConfig($input, $output, $command->getHelperSet(), $forceUpdate)) {
+            if (true === $command->getContainer()->getConfigManager()->updateConfig($forceUpdate)) {
                 $command->queueVagrantReload();
                 $command->queueVagrantProvision();
             }

@@ -53,8 +53,12 @@ class ConfigManager
         return array_map(function ($x) use ($attribute) { return $x[$attribute]; }, $this->getConfig()->getSitesArray());
     }
 
-    public function updateConfig(InputInterface $input, OutputInterface $output, HelperSet $helperSet, $skipSettingsfileCheck = false)
+    public function updateConfig($skipSettingsfileCheck = false)
     {
+        $input = $this->getContainer()->getInputInterface();
+        $output = $this->getContainer()->getOutputInterface();
+        $helperSet = $this->getContainer()->getHelperSet();
+
         if (!file_exists($this->getContainer()->getParameter('path_to_public_key_file'))) {
             $output->writeln('It seems like you don\'t have any SSH keys. Run <question>ssh-keygen -t rsa -C "your_email@example.com"</question> to generate keys.');
             die();
