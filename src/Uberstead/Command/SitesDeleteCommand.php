@@ -21,7 +21,5 @@ class SitesDeleteCommand extends BaseCommand
     {
         $this->getContainer()->getSiteManager()->listSites($input, $output, $this->getHelper('table'), true);
         $this->getContainer()->getSiteManager()->deleteSite($input, $output, $this->getHelper('question'));
-        $this->queueVagrantProvision();
-        $this->queueVagrantReload();
     }
 }

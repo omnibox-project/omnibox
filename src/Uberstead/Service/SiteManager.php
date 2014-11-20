@@ -96,6 +96,9 @@ class SiteManager
         $cm->dumpConfig();
         $cm->setDbHintInParametersYml($site);
 
+        $this->getContainer()->getVagrantManager()->provision();
+        $this->getContainer()->getVagrantManager()->reload();
+
         return $site;
     }
 }

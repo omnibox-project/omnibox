@@ -104,6 +104,8 @@ class ConfigManager
                 unset($sites[$i]);
                 $this->getConfig()->setSites($sites);
                 $this->dumpConfig();
+                $this->getContainer()->getVagrantManager()->provision();
+                $this->getContainer()->getVagrantManager()->reload();
             }
         }
     }

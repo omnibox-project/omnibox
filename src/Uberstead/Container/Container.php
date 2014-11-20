@@ -8,9 +8,18 @@ use Uberstead\Service\SiteManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\HelperSet;
+use Uberstead\Service\VagrantManager;
 
 class Container extends PimpleContainer
 {
+    /**
+     * @return VagrantManager
+     */
+    public function getVagrantManager()
+    {
+        return $this['vagrant_manager'];
+    }
+
     /**
      * @return HelperSet
      */

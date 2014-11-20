@@ -16,6 +16,6 @@ class UbersteadProvisionCommand extends BaseCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->queueVagrantProvision();
+        $this->getContainer()->getVagrantManager()->provision();
     }
 }

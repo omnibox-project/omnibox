@@ -21,9 +21,6 @@ class SitesAddCommand extends BaseCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<info>>>> Add Site <<<</info>');
-
         $this->getContainer()->getSiteManager()->addSite($input, $output, $this->getHelper('question'));
-        $this->queueVagrantProvision();
-        $this->queueVagrantReload();
     }
 }
