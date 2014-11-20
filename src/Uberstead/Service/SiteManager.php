@@ -18,7 +18,7 @@ class SiteManager
     {
         $cm = $this->getContainer()->getConfigManager();
 
-        $sites = $cm->getSitesArray(true);
+        $sites = $cm->getConfig()->getSitesArray(true);
         $ids = array();
         foreach ($sites as $id => $site) {
             $ids[] = $id;
@@ -74,7 +74,8 @@ class SiteManager
      */
     public function addSite(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper, $name = null, $directory = null, $webroot = null)
     {
-        $validator = $this->getValidator();
+        $cm = $this->getContainer()->getConfigManager();
+        $validator = $this->getContainer()->getValidator();
 
         if ($name === null) {
             $name = $questionHelper->ask($input, $output, $validator->createSiteNameQuestion());
@@ -91,9 +92,9 @@ class SiteManager
         }
 
         $site = new Site($name, $domain, $directory, $webroot);
-        $this->getConfigManager()->addSite($site);
-        $this->getConfigManager()->dumpConfig();
-        $this->getConfigManager()->setDbHintInParametersYml($site);
+        $cm->addSite($site);
+        $cm->dumpConfig();
+        $cm->setDbHintInParametersYml($site);
 
         return $site;
     }

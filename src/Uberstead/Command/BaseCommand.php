@@ -68,11 +68,11 @@ class BaseCommand extends Command
         $comment = "# Uberstead Sites";
 
         // Remove old Uberstead configs and add the current config
-        $fileContent = file_get_contents('/etc/hosts');
+        $fileContent = file_get_contents($this->getContainer()->getParameter('path_to_hosts_file'));
         $fileContent = preg_replace('/\n?.*' . preg_quote($comment) . '.*$/m', '', $fileContent);
         $fileContent = trim($fileContent, "\n");
         $fileContent .= sprintf("\n%s %s\n", $this->getContainer()->getConfigManager()->createRowForHostsFile(), $comment);
-        file_put_contents('/etc/hosts', $fileContent);
+        file_put_contents($this->getContainer()->getParameter('path_to_hosts_file'), $fileContent);
 
         // Flush dns cache
         exec('dscacheutil -flushcache');
@@ -83,8 +83,7 @@ class BaseCommand extends Command
     public function vagrantReload(OutputInterface $output)
     {
         // Remove folders that doesn't exist
-        $filename = '/etc/exports';
-        $fileContents = file($filename);
+        $fileContents = file($this->getContainer()->getParameter('path_to_exports_file'));
         foreach ($fileContents as $key => $line) {
             if (strpos($line, '-alldirs') !== false) {
                 preg_match_all('/"([^"]+)"/', $line, $matches);
@@ -93,7 +92,7 @@ class BaseCommand extends Command
                 }
             }
         }
-        file_put_contents($filename, implode("", $fileContents));
+        file_put_contents($this->getContainer()->getParameter('path_to_exports_file'), implode("", $fileContents));
 
         $output->writeln('<info>Running "vagrant reload"...</info>');
         $this->runCommandWithProgressBar($output, 'su $SUDO_USER -c "vagrant reload"');

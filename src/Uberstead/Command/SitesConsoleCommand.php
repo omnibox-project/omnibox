@@ -27,11 +27,11 @@ class SitesConsoleCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $array = $this->getConfig();
-        $sites = $array['sites'];
+        $config = $this->getContainer()->getConfigManager()->getConfig();
+        $sites = $config->getSites();
 
         foreach ($sites as $site) {
-            if ($site['name'] === $input->getArgument('site')) {
+            if ($site->getName() === $input->getArgument('site')) {
                 $process = new ProcessBuilder();
                 foreach ($_ENV as $k => $v) {
                     $process->setEnv($k, $v);
@@ -42,7 +42,7 @@ class SitesConsoleCommand extends BaseCommand
                     array(
                         'ssh',
                         '-t',
-                        'vagrant@'.$array['ip'],
+                        'vagrant@'.$config->getIp(),
                         '--',
                         'cd /home/vagrant/' . $site['name'] . ' && php app/console ' . $command . ' 2>&1'
                     )
