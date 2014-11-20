@@ -37,8 +37,10 @@ See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 - Edit, don't only add hints in, parameters.yml when generating a new project
 - Run initail setup (settings) command after composer has installed for the first time
 - Confirm delete project, ask if project files should be removed as well
+
 - Validate config input for IP, memory and cpus
 - Validate config file, dont just check if it exists
+
 - Ask if doctrine migrations should be migrated when settings up a new project with migrations
 - Don't just check if config exists, check validate its contents and generate a new if there are any errors
 - When choosing domain or path, list the default options and let the user pick one with a number or enter their own

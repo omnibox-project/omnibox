@@ -1,9 +1,7 @@
 <?php
 namespace Uberstead\Service;
 
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\Process\Process;
 
 class VagrantManager
 {
@@ -39,7 +37,7 @@ class VagrantManager
         $this->updateHostsFile();
 
         $output->writeln('<info>Running "vagrant provision"...</info>');
-        $this->runWithProgressBar('su $SUDO_USER -c "vagrant provision"');
+        $this->getContainer()->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "vagrant provision"');
     }
 
     private function runReload()
@@ -49,7 +47,7 @@ class VagrantManager
         $this->removeInvalidFoldersFromExports();
 
         $output->writeln('<info>Running "vagrant reload"...</info>');
-        $this->runWithProgressBar('su $SUDO_USER -c "vagrant reload"');
+        $this->getContainer()->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "vagrant reload"');
     }
 
     private function updateHostsFile()
@@ -81,53 +79,5 @@ class VagrantManager
             }
         }
         file_put_contents($this->getContainer()->getParameter('path_to_exports_file'), implode("", $fileContents));
-    }
-
-    /*
-     * Todo: Rewrite and move to better place
-     */
-    private function runWithProgressBar($command)
-    {
-        $output = $this->getContainer()->getOutputInterface();
-
-        $process = new Process($command);
-        $process->setTimeout(null);
-
-        $isVerbose = (OutputInterface::VERBOSITY_VERBOSE == $output->getVerbosity());
-
-        if ($isVerbose) {
-            $process->run(function ($type, $buffer) use (&$progress, &$error, &$bufferArr, &$output) {
-                    if (Process::ERR === $type) {
-                        $output->write('<error>'.$buffer.'</error>');
-                    } else {
-                        $output->write('<info>'.$buffer.'</info>');
-                    }
-                });
-        } else {
-            $progress = $this->getContainer()->getHelperSet()->get('progress');
-            $progress->setBarWidth(15);
-            $progress->start($output);
-
-            $hasError = false;
-            $bufferArr = array();
-
-            $process->run(function ($type, $buffer) use (&$progress, &$hasError, &$bufferArr, &$output) {
-                    if (Process::ERR === $type) {
-                        $hasError = true;
-                        $bufferArr[] = '<error>'.$buffer.'</error>';
-                    } else {
-                        $bufferArr[] = '<info>'.$buffer.'</info>';
-                    }
-
-                    $progress->advance();
-                });
-            $progress->finish();
-
-            if ($hasError) {
-                $output->writeln(implode('', $bufferArr));
-                $output->writeln('');
-                $output->writeln('<error>Got errors... Aborting!</error>');
-            }
-        }
     }
 }

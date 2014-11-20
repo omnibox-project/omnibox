@@ -71,19 +71,8 @@ class GenerateSymfonyProjectCommand extends BaseCommand
             $cmd = "php composer.phar create-project -s dev rgies/symfony ".$directory;
         }
 
-        $process = new Process('su $SUDO_USER -c "'.$cmd.'"');
-        $process->setTimeout(null);
-
         $output->writeln('<info>Running "'.$cmd.'"...</info>');
-        $output->writeln('[ This may take a minute ]');
-
-        $process->run(function ($type, $buffer) use (&$output) {
-                if (Process::ERR === $type) {
-                    $output->write('<error>'.$buffer.'</error>');
-                } else {
-                    //$output->write('<info>'.$buffer.'</info>');
-                }
-            });
+        $this->getContainer()->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "'.$cmd.'"');
 
         $this->getContainer()->getVagrantManager()->provision();
         $this->getContainer()->getVagrantManager()->reload();
