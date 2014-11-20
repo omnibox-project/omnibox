@@ -9,9 +9,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\HelperSet;
 use Uberstead\Service\VagrantManager;
+use Uberstead\Helper\ProcessHelper;
 
 class Container extends PimpleContainer
 {
+    /**
+     * @return ProcessHelper
+     */
+    public function getProcessHelper()
+    {
+        return $this['process_helper'];
+    }
+
     /**
      * @return VagrantManager
      */
