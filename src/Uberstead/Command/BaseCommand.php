@@ -10,18 +10,15 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Console\Question\Question;
-use Uberstead\Container\Container;
+use Uberstead\Container\ContainerAwareTrait;
 
 class BaseCommand extends Command
 {
+    use ContainerAwareTrait;
+
     private $queueVagrantProvision = false;
     private $queueVagrantReload = false;
     private $commandForTerminateEvent = null;
-
-    /**
-     * @var Container
-     */
-    private $container;
 
     /**
      * @return null
@@ -64,23 +61,6 @@ class BaseCommand extends Command
     {
         $this->queueVagrantReload = true;
     }
-
-    /**
-     * @param Container $container
-     */
-    public function setContainer($container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return Container
-     */
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
 
     public function vagrantProvision(OutputInterface $output)
     {

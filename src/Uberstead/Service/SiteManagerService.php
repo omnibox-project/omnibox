@@ -7,25 +7,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Parser;
+use Uberstead\Container\ContainerAwareTrait;
 use Uberstead\Model\Site;
-use Uberstead\Service\ConfigManagerService;
-use Uberstead\Service\ValidatorService;
 
 class SiteManagerService
 {
-    /**
-     * @var ConfigManagerService
-     */
-    var $configManager;
-
-    /**
-     * @var ValidatorService
-     */
-    var $validator;
+    use ContainerAwareTrait;
 
     public function deleteSite(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
     {
-        $sites = $this->getConfigManager()->getConfig()->getSitesArray(true);
+        $cm = $this->getContainer()->getConfigManager();
+
+        $sites = $cm->getSitesArray(true);
         $ids = array();
         foreach ($sites as $id => $site) {
             $ids[] = $id;
@@ -45,12 +38,14 @@ class SiteManagerService
         );
 
         $id = $questionHelper->ask($input, $output, $question);
-        $this->getConfigManager()->deleteSiteByName($sites[$id]['name']);
+        $cm->deleteSiteByName($sites[$id]['name']);
     }
 
     public function listSites(InputInterface $input, OutputInterface $output, TableHelper $tableHelper, $showIds = false)
     {
-        $siteList = $this->getConfigManager()->getConfig()->getSitesArray($showIds);
+        $cm = $this->getContainer()->getConfigManager();
+
+        $siteList = $cm->getConfig()->getSitesArray($showIds);
 
         if ($showIds) {
             $fields = array('ID', 'Name', 'Domain', 'Directory', 'Web root');
@@ -101,43 +96,5 @@ class SiteManagerService
         $this->getConfigManager()->setDbHintInParametersYml($site);
 
         return $site;
-    }
-
-    function __construct($configManager, $validator)
-    {
-        $this->configManager = $configManager;
-        $this->validator = $validator;
-    }
-
-    /**
-     * @return ConfigManagerService
-     */
-    public function getConfigManager()
-    {
-        return $this->configManager;
-    }
-
-    /**
-     * @param ConfigManagerService $configManager
-     */
-    public function setConfigManager(ConfigManagerService $configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
-    /**
-     * @return ValidatorService
-     */
-    public function getValidator()
-    {
-        return $this->validator;
-    }
-
-    /**
-     * @param ValidatorService $validator
-     */
-    public function setValidator($validator)
-    {
-        $this->validator = $validator;
     }
 }

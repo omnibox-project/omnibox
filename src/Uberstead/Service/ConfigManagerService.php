@@ -10,9 +10,12 @@ use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
 use Uberstead\Model\Site;
 use Uberstead\Model\Config;
+use Uberstead\Container\ContainerAwareTrait;
 
 class ConfigManagerService
 {
+    use ContainerAwareTrait;
+
     private $configFileName = 'uberstead.yaml';
 
     /**

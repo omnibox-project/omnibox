@@ -2,42 +2,20 @@
 namespace Uberstead\Service;
 
 use Symfony\Component\Console\Question\Question;
-use Uberstead\Service\ConfigManagerService;
+use Uberstead\Service\ConfigManager;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class ValidatorService
 {
-    /**
-     * @var ConfigManagerService
-     */
-    var $configManager;
-
-    function __construct($configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
-    /**
-     * @return ConfigManagerService
-     */
-    public function getConfigManager()
-    {
-        return $this->configManager;
-    }
-
-    /**
-     * @param ConfigManagerService $configManager
-     */
-    public function setConfigManager($configManager)
-    {
-        $this->configManager = $configManager;
-    }
+    use \Uberstead\Container\ContainerAwareTrait;
 
     /**
      * @return Question
      */
     public function createSiteNameQuestion()
     {
-        $siteNames = $this->getConfigManager()->getSiteAttributeList('name');
+        $cm = $this->getContainer()->getConfigManager();
+        $siteNames = $cm->getSiteAttributeList('name');
 
         $question = new Question('Assign a name for this project: ');
         $validator = $this;
@@ -71,7 +49,9 @@ class ValidatorService
      */
     public function createDomainQuestion($projectName)
     {
-        $domains = $this->getConfigManager()->getSiteAttributeList('domain');
+        $cm = $this->getContainer()->getConfigManager();
+
+        $domains = $cm->getSiteAttributeList('domain');
 
         $question = new Question('Choose a domain: [www.'.$projectName.'.dev] ', 'www.'.$projectName.'.dev');
         $question->setAutocompleterValues(array(
@@ -111,7 +91,9 @@ class ValidatorService
      */
     public function createDirectoryQuestion($projectName)
     {
-        $directories = $this->getConfigManager()->getSiteAttributeList('directory');
+        $cm = $this->getContainer()->getConfigManager();
+
+        $directories = $cm->getSiteAttributeList('directory');
 
 //        if (isset($_SERVER['HOME'])) {
 //            $defaultDirectory = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . $name;
