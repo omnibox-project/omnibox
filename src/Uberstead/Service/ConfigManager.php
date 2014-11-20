@@ -59,11 +59,6 @@ class ConfigManager
         $output = $this->getContainer()->getOutputInterface();
         $helperSet = $this->getContainer()->getHelperSet();
 
-        if (!file_exists($this->getContainer()->getParameter('path_to_public_key_file'))) {
-            $output->writeln('It seems like you don\'t have any SSH keys. Run <question>ssh-keygen -t rsa -C "your_email@example.com"</question> to generate keys.');
-            die();
-        }
-
         if ($skipSettingsfileCheck === true || file_exists($this->getContainer()->getParameter('path_to_config_file')) === false) {
             $output->writeln('<info>>>> Configurate Server <<<</info>');
 

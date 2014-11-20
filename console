@@ -78,6 +78,11 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
             die();
         }
 
+        if (!file_exists($container->getParameter('path_to_public_key_file'))) {
+            $output->writeln('It seems like you don\'t have any SSH keys. Run <question>ssh-keygen -t rsa -C "your_email@example.com"</question> to generate keys.');
+            die();
+        }
+
         if ($command instanceof BaseCommand) {
             // Force settings update if the settingscommand is executed
             $forceUpdate = ($command->getName() === "uberstead:settings");
