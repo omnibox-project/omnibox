@@ -76,4 +76,15 @@ class Container extends PimpleContainer
     {
         return $this['parameters'][$parameter];
     }
+
+    public function populateCointainerAwareServices()
+    {
+        foreach($this->keys() as $key) {
+            $object = $this[$key];
+            if (method_exists($object, 'setContainer')) {
+                $object->setContainer($this);
+            }
+        }
+    }
+
 }

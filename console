@@ -40,18 +40,11 @@ $parameters = array(
 );
 
 $container['parameters'] = $parameters;
-
 $container['config_manager'] = new ConfigManager();
-$container['config_manager']->setContainer($container);
-
 $container['validator'] = new Validator();
-$container['validator']->setContainer($container);
-
 $container['site_manager'] = new SiteManager();
-$container['site_manager']->setContainer($container);
-
 $container['vagrant_manager'] = new VagrantManager();
-$container['vagrant_manager']->setContainer($container);
+$container->populateCointainerAwareServices();
 
 /*
  * Load Commands
