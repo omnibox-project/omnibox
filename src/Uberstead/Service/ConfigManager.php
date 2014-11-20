@@ -53,42 +53,47 @@ class ConfigManager
         return array_map(function ($x) use ($attribute) { return $x[$attribute]; }, $this->getConfig()->getSitesArray());
     }
 
-    public function updateConfig($skipSettingsfileCheck = false)
+    public function configIsValid()
+    {
+        if (!file_exists($this->getContainer()->getParameter('path_to_config_file'))) {
+            return false;
+        }
+
+        // todo: Validate config file contents. invalid? -> ask if it should be set to default values
+
+        return true;
+    }
+
+    public function updateConfig()
     {
         $input = $this->getContainer()->getInputInterface();
         $output = $this->getContainer()->getOutputInterface();
         $helperSet = $this->getContainer()->getHelperSet();
 
-        if ($skipSettingsfileCheck === true || file_exists($this->getContainer()->getParameter('path_to_config_file')) === false) {
-            $output->writeln('<info>>>> Configurate Server <<<</info>');
+        $output->writeln('<info>>>> Configurate Server <<<</info>');
 
-            if ($skipSettingsfileCheck) {
-                $ask = '<question>This will update your server settings. Continue? [y]</question>';
-            } else {
-                $ask = '<question>'.$this->getContainer()->getParameter('path_to_config_file').' does not exist! Would you like to generate it? [y]</question>';
-            }
-
-            $helper = $helperSet->get('question');
-            $question = new ConfirmationQuestion($ask, true);
-
-            if ($helper->ask($input, $output, $question)) {
-                $question = new Question('Which IP would you like to assign to the server? ['.$this->getConfig()->getIp().']: ', $this->getConfig()->getIp());
-                $this->getConfig()->setIp($helper->ask($input, $output, $question));
-                $question = new Question('Amount of memory ['.$this->getConfig()->getMemory().']: ', $this->getConfig()->getMemory());
-                $this->getConfig()->setMemory($helper->ask($input, $output, $question));
-                $question = new Question('Number of CPU cores ['.$this->getConfig()->getCpus().']: ', $this->getConfig()->getCpus());
-                $this->getConfig()->setCpus($helper->ask($input, $output, $question));
-            } else {
-                $output->writeln('Aborting.');
-                die();
-            }
-
-            $this->dumpConfig();
-
-            return true;
+        if (file_exists($this->getContainer()->getParameter('path_to_config_file'))) {
+            $ask = '<question>This will update your server settings. Continue? [y]</question>';
+        } else {
+            $ask = '<question>'.$this->getContainer()->getParameter('path_to_config_file').' does not exist! Would you like to generate it? [y]</question>';
         }
 
-        return false;
+        $helper = $helperSet->get('question');
+        $question = new ConfirmationQuestion($ask, true);
+
+        if ($helper->ask($input, $output, $question)) {
+            $question = new Question('Which IP would you like to assign to the server? ['.$this->getConfig()->getIp().']: ', $this->getConfig()->getIp());
+            $this->getConfig()->setIp($helper->ask($input, $output, $question));
+            $question = new Question('Amount of memory ['.$this->getConfig()->getMemory().']: ', $this->getConfig()->getMemory());
+            $this->getConfig()->setMemory($helper->ask($input, $output, $question));
+            $question = new Question('Number of CPU cores ['.$this->getConfig()->getCpus().']: ', $this->getConfig()->getCpus());
+            $this->getConfig()->setCpus($helper->ask($input, $output, $question));
+        } else {
+            $output->writeln('Aborting.');
+            die();
+        }
+
+        $this->dumpConfig();
     }
 
     public function deleteSiteByName($name)

@@ -84,11 +84,9 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
         }
 
         if ($command instanceof BaseCommand) {
-            // Force settings update if the settingscommand is executed
-            $forceUpdate = ($command->getName() === "uberstead:settings");
-
-            // If checkConfig returns true (settings are updated), refresh vagrant
-            if (true === $command->getContainer()->getConfigManager()->updateConfig($forceUpdate)) {
+            // Run update config of config file isn't valid, or config command han been executed
+            if (!$container->getConfigManager()->configIsValid() || $command->getName() === "uberstead:settings") {
+                $container->getConfigManager()->updateConfig();
                 $command->queueVagrantReload();
                 $command->queueVagrantProvision();
             }
