@@ -1,17 +1,25 @@
 <?php
 namespace Uberstead\Helper;
 
-use Uberstead\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Output\OutputInterface;
+use Uberstead\Helper\CliHelper;
 
 class ProcessHelper
 {
-    use ContainerAwareTrait;
+    /**
+     * @var CliHelper
+     */
+    private $cliHelper;
+
+    function __construct(CliHelper $cliHelper)
+    {
+        $this->cliHelper = $cliHelper;
+    }
 
     public function runWithProgressBar($command)
     {
-        $output = $this->getContainer()->getOutputInterface();
+        $output = $this->cliHelper->getOutputInterface();
 
         $process = new Process($command);
         $process->setTimeout(null);
@@ -27,7 +35,7 @@ class ProcessHelper
                     }
                 });
         } else {
-            $progress = $this->getContainer()->getHelperSet()->get('progress');
+            $progress = $this->cliHelper->getHelperSet()->get('progress');
             $progress->setBarWidth(15);
             $progress->start($output);
 

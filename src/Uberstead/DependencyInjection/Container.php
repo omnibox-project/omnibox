@@ -8,25 +8,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\HelperSet;
 use Uberstead\Service\VagrantManager;
-use Uberstead\Helper\ProcessHelper;
-use Uberstead\Helper\QuestionHelper;
+use Uberstead\Helper\CliHelper;
 
 class Container extends PimpleContainer
 {
     /**
-     * @return ProcessHelper
+     * @return CliHelper
      */
-    public function getProcessHelper()
+    public function getCliHelper()
     {
-        return $this['process_helper'];
-    }
-
-    /**
-     * @return QuestionHelper
-     */
-    public function getQuestionHelper()
-    {
-        return $this['question_helper'];
+        return $this['cli_helper'];
     }
 
     /**
@@ -35,30 +26,6 @@ class Container extends PimpleContainer
     public function getVagrantManager()
     {
         return $this['vagrant_manager'];
-    }
-
-    /**
-     * @return HelperSet
-     */
-    public function getHelperSet()
-    {
-        return $this['helper_set'];
-    }
-
-    /**
-     * @return InputInterface
-     */
-    public function getInputInterface()
-    {
-        return $this['input_interface'];
-    }
-
-    /**
-     * @return OutputInterface
-     */
-    public function getOutputInterface()
-    {
-        return $this['output_interface'];
     }
 
     /**

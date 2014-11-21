@@ -1,14 +1,47 @@
 <?php
 namespace Uberstead\Service;
 
-use Uberstead\DependencyInjection\ContainerAwareTrait;
+use Uberstead\Helper\CliHelper;
+use Uberstead\Service\ConfigManager;
 
 class VagrantManager
 {
-    use ContainerAwareTrait;
+    private $provision;
 
-    private $provision = false;
-    private $reload = false;
+    private $reload;
+
+    /**
+     * @var CliHelper
+     */
+    private $cliHelper;
+
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
+    /**
+     * @var array
+     */
+    protected $parameters;
+
+    function __construct($parameters, CliHelper $cliHelper, ConfigManager $configManager)
+    {
+        $this->parameters = $parameters;
+        $this->configManager = $configManager;
+        $this->cliHelper = $cliHelper;
+        $this->provision = false;
+        $this->reload = false;
+    }
+
+    /**
+     * @param $parameter
+     * @return mixed
+     */
+    public function getParameter($parameter)
+    {
+        return $this->parameters[$parameter];
+    }
 
     public function executeCommands()
     {
@@ -31,23 +64,23 @@ class VagrantManager
 
     private function runProvision()
     {
-        $output = $this->getContainer()->getOutputInterface();
+        $output = $this->cliHelper->getOutputInterface();
 
         $output->writeln('<info>Updating hosts file...</info>');
         $this->updateHostsFile();
 
         $output->writeln('<info>Running "vagrant provision"...</info>');
-        $this->getContainer()->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "vagrant provision"');
+        $this->cliHelper->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "vagrant provision"');
     }
 
     private function runReload()
     {
-        $output = $this->getContainer()->getOutputInterface();
+        $output = $this->cliHelper->getOutputInterface();
 
         $this->removeInvalidFoldersFromExports();
 
         $output->writeln('<info>Running "vagrant reload"...</info>');
-        $this->getContainer()->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "vagrant reload"');
+        $this->cliHelper->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "vagrant reload"');
     }
 
     private function updateHostsFile()
@@ -56,11 +89,11 @@ class VagrantManager
         $comment = "# Uberstead Sites";
 
         // Remove old Uberstead configs and add the current config
-        $fileContent = file_get_contents($this->getContainer()->getParameter('path_to_hosts_file'));
+        $fileContent = file_get_contents($this->getParameter('path_to_hosts_file'));
         $fileContent = preg_replace('/\n?.*' . preg_quote($comment) . '.*$/m', '', $fileContent);
         $fileContent = trim($fileContent, "\n");
-        $fileContent .= sprintf("\n%s %s\n", $this->getContainer()->getConfigManager()->createRowForHostsFile(), $comment);
-        file_put_contents($this->getContainer()->getParameter('path_to_hosts_file'), $fileContent);
+        $fileContent .= sprintf("\n%s %s\n", $this->configManager->createRowForHostsFile(), $comment);
+        file_put_contents($this->getParameter('path_to_hosts_file'), $fileContent);
 
         // Flush dns cache
         exec('dscacheutil -flushcache');
@@ -69,7 +102,7 @@ class VagrantManager
     private function removeInvalidFoldersFromExports()
     {
         // Remove folders in /etc/exports that doesn't exist (causes error)
-        $fileContents = file($this->getContainer()->getParameter('path_to_exports_file'));
+        $fileContents = file($this->getParameter('path_to_exports_file'));
         foreach ($fileContents as $key => $line) {
             if (strpos($line, '-alldirs') !== false) {
                 preg_match_all('/"([^"]+)"/', $line, $matches);
@@ -78,6 +111,6 @@ class VagrantManager
                 }
             }
         }
-        file_put_contents($this->getContainer()->getParameter('path_to_exports_file'), implode("", $fileContents));
+        file_put_contents($this->getParameter('path_to_exports_file'), implode("", $fileContents));
     }
 }

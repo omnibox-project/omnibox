@@ -35,7 +35,7 @@ class GenerateSymfonyProjectCommand extends BaseCommand
         $table->setHeaders(array('Choice', 'Distribution', 'Description'))->setRows($array);
         $table->render($output);
 
-        $choice = $this->getContainer()->getQuestionHelper()->promptDistributionChoice($array);
+        $choice = $this->getContainer()->getCliHelper()->getQuestionHelper()->promptDistributionChoice($array);
 
         $site = $this->getContainer()->getSiteManager()->addSite(new Site(null, null, null, 'web'));
         $directory = $site->getDirectory();
@@ -69,7 +69,7 @@ class GenerateSymfonyProjectCommand extends BaseCommand
         }
 
         $output->writeln('<info>Running "'.$cmd.'"...</info>');
-        $this->getContainer()->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "'.$cmd.'"');
+        $this->getContainer()->getCliHelper()->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "'.$cmd.'"');
 
         $this->getContainer()->getVagrantManager()->provision();
         $this->getContainer()->getVagrantManager()->reload();

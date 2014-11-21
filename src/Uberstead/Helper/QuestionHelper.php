@@ -1,22 +1,27 @@
 <?php
 namespace Uberstead\Helper;
 
-use Uberstead\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Console\Question\Question;
 use Uberstead\Model\Site;
+use Uberstead\Helper\CliHelper;
 
 class QuestionHelper
 {
-    use ContainerAwareTrait;
+    /**
+     * @var CliHelper
+     */
+    private $cliHelper;
 
-    public function promptSiteName()
+    function __construct(CliHelper $cliHelper)
     {
-        $questionHelper = $this->getContainer()->getHelperSet()->get('question');
-        $input = $this->getContainer()->getInputInterface();
-        $output = $this->getContainer()->getOutputInterface();
+        $this->cliHelper = $cliHelper;
+    }
 
-        $siteNames = $this->getContainer()->getConfigManager()->getSiteAttributeList('name');
-
+    public function promptSiteName($siteNames)
+    {
+        $questionHelper = $this->cliHelper->getHelperSet()->get('question');
+        $input = $this->cliHelper->getInputInterface();
+        $output = $this->cliHelper->getOutputInterface();
 
         $question = new Question('Assign a name for this project: ');
         $validator = $this;
@@ -27,13 +32,11 @@ class QuestionHelper
         return $questionHelper->ask($input, $output, $question);
     }
 
-    public function promptSiteDomain(Site $site)
+    public function promptSiteDomain(Site $site, $domains)
     {
-        $questionHelper = $this->getContainer()->getHelperSet()->get('question');
-        $input = $this->getContainer()->getInputInterface();
-        $output = $this->getContainer()->getOutputInterface();
-
-        $domains = $this->getContainer()->getConfigManager()->getSiteAttributeList('domain');
+        $questionHelper = $this->cliHelper->getHelperSet()->get('question');
+        $input = $this->cliHelper->getInputInterface();
+        $output = $this->cliHelper->getOutputInterface();
 
         $question = new Question('Choose a domain: [www.'.$site->getName().'.dev] ', 'www.'.$site->getName().'.dev');
         $question->setAutocompleterValues(array(
@@ -52,13 +55,11 @@ class QuestionHelper
     }
 
 
-    public function promptSiteDirectory(Site $site)
+    public function promptSiteDirectory(Site $site, $directories)
     {
-        $questionHelper = $this->getContainer()->getHelperSet()->get('question');
-        $input = $this->getContainer()->getInputInterface();
-        $output = $this->getContainer()->getOutputInterface();
-
-        $directories = $this->getContainer()->getConfigManager()->getSiteAttributeList('directory');
+        $questionHelper = $this->cliHelper->getHelperSet()->get('question');
+        $input = $this->cliHelper->getInputInterface();
+        $output = $this->cliHelper->getOutputInterface();
 
 //        if (isset($_SERVER['HOME'])) {
 //            $defaultDirectory = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . $name;
@@ -83,9 +84,9 @@ class QuestionHelper
 
     public function promptSiteWebroot(Site $site)
     {
-        $questionHelper = $this->getContainer()->getHelperSet()->get('question');
-        $input = $this->getContainer()->getInputInterface();
-        $output = $this->getContainer()->getOutputInterface();
+        $questionHelper = $this->cliHelper->getHelperSet()->get('question');
+        $input = $this->cliHelper->getInputInterface();
+        $output = $this->cliHelper->getOutputInterface();
 
         $question = new Question('Web root (relative to the site directory): [web] ', 'web');
         $question->setValidator(
@@ -105,9 +106,9 @@ class QuestionHelper
 
     public function promptDistributionChoice($choices)
     {
-        $questionHelper = $this->getContainer()->getHelperSet()->get('question');
-        $input = $this->getContainer()->getInputInterface();
-        $output = $this->getContainer()->getOutputInterface();
+        $questionHelper = $this->cliHelper->getHelperSet()->get('question');
+        $input = $this->cliHelper->getInputInterface();
+        $output = $this->cliHelper->getOutputInterface();
 
         $question = new Question('Choose your preferred Symfony2 flavor: [1] ', '1');
         $question->setValidator(

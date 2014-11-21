@@ -8,19 +8,42 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
-use Uberstead\DependencyInjection\Container;
 use Uberstead\Model\Site;
 use Uberstead\Model\Config;
-use Uberstead\DependencyInjection\ContainerAwareTrait;
+use Uberstead\Helper\CliHelper;
 
 class ConfigManager
 {
-    use ContainerAwareTrait;
+    /**
+     * @var array
+     */
+    protected $parameters;
 
     /**
      * @var Config
      */
-    private $config = null;
+    private $config;
+
+    /**
+     * @var CliHelper
+     */
+    private $cliHelper;
+
+    function __construct($parameters, CliHelper $cliHelper)
+    {
+        $this->parameters = $parameters;
+        $this->cliHelper = $cliHelper;
+        $this->config = null;
+    }
+
+    /**
+     * @param $parameter
+     * @return mixed
+     */
+    public function getParameter($parameter)
+    {
+        return $this->parameters[$parameter];
+    }
 
     /**
      * @return Config
@@ -29,10 +52,10 @@ class ConfigManager
     {
         if ($this->config === null) {
             $yaml = new Parser();
-            if (file_exists($this->getContainer()->getParameter('path_to_config_file'))) {
-                $array = $yaml->parse(file_get_contents($this->getContainer()->getParameter('path_to_config_file')));
+            if (file_exists($this->getParameter('path_to_config_file'))) {
+                $array = $yaml->parse(file_get_contents($this->getParameter('path_to_config_file')));
             } else {
-                $array = $this->getContainer()->getParameter('default_config_values');
+                $array = $this->getParameter('default_config_values');
             }
             $this->config = new Config($array);
         }
@@ -55,7 +78,7 @@ class ConfigManager
 
     public function configIsValid()
     {
-        if (!file_exists($this->getContainer()->getParameter('path_to_config_file'))) {
+        if (!file_exists($this->getParameter('path_to_config_file'))) {
             return false;
         }
 
@@ -66,16 +89,16 @@ class ConfigManager
 
     public function updateConfig()
     {
-        $input = $this->getContainer()->getInputInterface();
-        $output = $this->getContainer()->getOutputInterface();
-        $helperSet = $this->getContainer()->getHelperSet();
+        $input = $this->cliHelper->getInputInterface();
+        $output = $this->cliHelper->getOutputInterface();
+        $helperSet = $this->cliHelper->getHelperSet();
 
         $output->writeln('<info>>>> Configurate Server <<<</info>');
 
-        if (file_exists($this->getContainer()->getParameter('path_to_config_file'))) {
+        if (file_exists($this->getParameter('path_to_config_file'))) {
             $ask = '<question>This will update your server settings. Continue? [y]</question>';
         } else {
-            $ask = '<question>'.$this->getContainer()->getParameter('path_to_config_file').' does not exist! Would you like to generate it? [y]</question>';
+            $ask = '<question>'.$this->getParameter('path_to_config_file').' does not exist! Would you like to generate it? [y]</question>';
         }
 
         $helper = $helperSet->get('question');
@@ -104,8 +127,6 @@ class ConfigManager
                 unset($sites[$i]);
                 $this->getConfig()->setSites($sites);
                 $this->dumpConfig();
-                $this->getContainer()->getVagrantManager()->provision();
-                $this->getContainer()->getVagrantManager()->reload();
             }
         }
     }
@@ -114,10 +135,10 @@ class ConfigManager
     {
         $dumper = new Dumper();
         $yaml = $dumper->dump($this->getConfig()->toArray(), 3);
-        file_put_contents($this->getContainer()->getParameter('path_to_config_file'), $yaml);
+        file_put_contents($this->getParameter('path_to_config_file'), $yaml);
 
-        chmod($this->getContainer()->getParameter('path_to_config_file'), 0664);
-        chown($this->getContainer()->getParameter('path_to_config_file'), $this->getContainer()->getParameter('system_user'));
+        chmod($this->getParameter('path_to_config_file'), 0664);
+        chown($this->getParameter('path_to_config_file'), $this->getParameter('system_user'));
     }
 
     public function setDbHintInParametersYml(Site $site)

@@ -14,6 +14,7 @@ use Uberstead\Service\SiteManager;
 use Uberstead\Service\VagrantManager;
 use Uberstead\Helper\ProcessHelper;
 use Uberstead\Helper\QuestionHelper;
+use Uberstead\Helper\CliHelper;
 
 set_time_limit(0);
 require_once "vendor/autoload.php";
@@ -23,40 +24,40 @@ require_once "vendor/autoload.php";
  */
 $container = new Container();
 
-$parameters = array(
-    'path_to_hosts_file' => '/etc/hosts',
-    'path_to_exports_file' => '/etc/exports',
-    'path_to_public_key_file' => $_SERVER['HOME'].'/.ssh/id_rsa.pub',
-    'system_user' => get_current_user(),
-    'path_to_config_file' => 'uberstead.yaml',
-    'default_config_values' => array(
-        'ip' => '192.168.10.10',
-        'memory' => '2048',
-        'cpus' => '1',
-        'defaultfoldertype' => 'nfs',
-        'authorize' => '~/.ssh/id_rsa.pub',
-        'keys' => array('~/.ssh/id_rsa'),
-        'sites' => array(),
-    )
-);
+$container['parameters'] = function ($c) {
+    return array(
+        'path_to_hosts_file' => '/etc/hosts',
+        'path_to_exports_file' => '/etc/exports',
+        'path_to_public_key_file' => $_SERVER['HOME'].'/.ssh/id_rsa.pub',
+        'system_user' => get_current_user(),
+        'path_to_config_file' => 'uberstead.yaml',
+        'default_config_values' => array(
+            'ip' => '192.168.10.10',
+            'memory' => '2048',
+            'cpus' => '1',
+            'defaultfoldertype' => 'nfs',
+            'authorize' => '~/.ssh/id_rsa.pub',
+            'keys' => array('~/.ssh/id_rsa'),
+            'sites' => array(),
+        )
+    );
+};
 
-$container['parameters'] = $parameters;
-$container['config_manager'] = new ConfigManager();
-$container['site_manager'] = new SiteManager();
-$container['vagrant_manager'] = new VagrantManager();
-$container['process_helper'] = new ProcessHelper();
-$container['question_helper'] = new QuestionHelper();
-$container->populateCointainerAwareServices();
+$container['cli_helper'] = function ($c) {
+    return new CliHelper();
+};
 
-/*
- * Load Commands
- */
-$finder = new Finder();
-$commandFiles = $finder->files()
-    ->name('*Command.php')
-    ->notName('*BaseCommand.php')
-    ->in('src')
-;
+$container['config_manager'] = function ($c) {
+    return new ConfigManager($c['parameters'], $c['cli_helper']);
+};
+
+$container['vagrant_manager'] = function ($c) {
+    return new VagrantManager($c['parameters'], $c['cli_helper'], $c['config_manager']);
+};
+
+$container['site_manager'] = function ($c) {
+    return new SiteManager($c['cli_helper'], $c['vagrant_manager'], $c['config_manager']);
+};
 
 /*
  * Setup event dispatcher
@@ -64,30 +65,36 @@ $commandFiles = $finder->files()
 $dispatcher = new EventDispatcher();
 $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) use ($container) {
         /** @var BaseCommand $command */
-        $input = $event->getInput();
-        $output = $event->getOutput();
         $command = $event->getCommand();
 
-        $container['output_interface'] = $output;
-        $container['input_interface'] = $input;
-        $container['helper_set'] = $command->getHelperSet();
+        /** @var CliHelper $ch */
+        $ch = $container['cli_helper'];
+        $ch->setHelperset($command->getHelperSet());
+        $ch->setInputInterface($event->getInput());
+        $ch->setOutputInterface($event->getOutput());
 
         if (posix_getuid() != 0) {
-            $output->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
+            $event->getOutput()->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
             die();
         }
 
         if (!file_exists($container->getParameter('path_to_public_key_file'))) {
-            $output->writeln('It seems like you don\'t have any SSH keys. Run <question>ssh-keygen -t rsa -C "your_email@example.com"</question> to generate keys.');
+            $event->getOutput()->writeln('It seems like you don\'t have any SSH keys. Run <question>ssh-keygen -t rsa -C "your_email@example.com"</question> to generate keys.');
             die();
         }
 
         if ($command instanceof BaseCommand) {
+            if (method_exists($command, 'setContainer')) {
+                $command->setContainer($container);
+            }
+
             // Run update config of config file isn't valid, or config command han been executed
-            if (!$container->getConfigManager()->configIsValid() || $command->getName() === "uberstead:settings") {
-                $container->getConfigManager()->updateConfig();
-                $container->getVagrantManager()->provision();
-                $container->getVagrantManager()->reload();
+            /** @var ConfigManager $cm */
+            $cm = $container['config_manager'];
+            if (!$cm->configIsValid() || $command->getName() === "uberstead:settings") {
+                $cm->updateConfig();
+                $cm->provision();
+                $cm->reload();
             }
         }
     });
@@ -102,6 +109,15 @@ $dispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEve
         }
     });
 
+/*
+ * Load Commands
+ */
+$finder = new Finder();
+$commandFiles = $finder->files()
+    ->name('*Command.php')
+    ->notName('*BaseCommand.php')
+    ->in('src')
+;
 
 $commands = array();
 foreach ($commandFiles as $file) {
@@ -110,9 +126,6 @@ foreach ($commandFiles as $file) {
         $object = new $class();
         if ($object instanceof Command) {
             $commands[] = $object;
-            if (method_exists($object, 'setContainer')) {
-                $object->setContainer($container);
-            }
         }
     }
 }

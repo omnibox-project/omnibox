@@ -2,21 +2,37 @@
 namespace Uberstead\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Helper\ProgressHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Yaml\Dumper;
-use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Console\Question\Question;
-use Uberstead\DependencyInjection\ContainerAwareTrait;
+use Uberstead\DependencyInjection\Container;
 
 class BaseCommand extends Command
 {
-    use ContainerAwareTrait;
-
     private $commandForTerminateEvent = null;
+
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * Returns the container.
+     *
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    /**
+     * Sets the container.
+     *
+     * @param Container|null $container The container or null
+     * @return void
+     */
+    public function setContainer(Container $container = null)
+    {
+        $this->container = $container;
+    }
 
     /**
      * @return null

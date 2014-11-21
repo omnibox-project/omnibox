@@ -6,19 +6,38 @@ use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Yaml\Parser;
-use Uberstead\DependencyInjection\ContainerAwareTrait;
 use Uberstead\Model\Site;
+use Uberstead\Service\ConfigManager;
+use Uberstead\Service\VagrantManager;
+use Uberstead\Helper\CliHelper;
 
 class SiteManager
 {
-    use ContainerAwareTrait;
+    /**
+     * @var CliHelper
+     */
+    private $cliHelper;
+
+    /**
+     * @var VagrantManager
+     */
+    private $vagrantManager;
+
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
+    function __construct(CliHelper $cliHelper, VagrantManager $vagrantManager, ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+        $this->cliHelper = $cliHelper;
+        $this->vagrantManager = $vagrantManager;
+    }
 
     public function deleteSite(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
     {
-        $cm = $this->getContainer()->getConfigManager();
-
-        $sites = $cm->getConfig()->getSitesArray(true);
+        $sites = $this->configManager->getConfig()->getSitesArray(true);
         $ids = array();
         foreach ($sites as $id => $site) {
             $ids[] = $id;
@@ -38,14 +57,14 @@ class SiteManager
         );
 
         $id = $questionHelper->ask($input, $output, $question);
-        $cm->deleteSiteByName($sites[$id]['name']);
+        $this->configManager->deleteSiteByName($sites[$id]['name']);
+        $this->vagrantManager->provision();
+        $this->vagrantManager->reload();
     }
 
     public function listSites(InputInterface $input, OutputInterface $output, TableHelper $tableHelper, $showIds = false)
     {
-        $cm = $this->getContainer()->getConfigManager();
-
-        $siteList = $cm->getConfig()->getSitesArray($showIds);
+        $siteList = $this->configManager->getConfig()->getSitesArray($showIds);
 
         if ($showIds) {
             $fields = array('ID', 'Name', 'Domain', 'Directory', 'Web root');
@@ -64,12 +83,7 @@ class SiteManager
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @param QuestionHelper $questionHelper
-     * @param null $name
-     * @param null $directory
-     * @param null $webroot
+     * @param Site $site
      * @return Site
      */
     public function addSite(Site $site = null)
@@ -78,32 +92,31 @@ class SiteManager
             $site = new Site();
         }
 
-        $qh = $this->getContainer()->getQuestionHelper();
-
+        $qh = $this->cliHelper->getQuestionHelper();
 
         if ($site->getName() === null) {
-            $site->setName($qh->promptSiteName());
+            $siteNames = $this->configManager->getSiteAttributeList('name');
+            $site->setName($qh->promptSiteName($siteNames));
         }
 
-        $site->setDomain($qh->promptSiteDomain($site));
+        $domains = $this->configManager->getSiteAttributeList('domain');
+        $site->setDomain($qh->promptSiteDomain($site, $domains));
 
         if ($site->getDirectory() === null) {
-            $site->setDirectory($qh->promptSiteDirectory($site));
+            $directories = $this->configManager->getSiteAttributeList('directory');
+            $site->setDirectory($qh->promptSiteDirectory($site, $directories));
         }
 
         if ($site->getWebroot() === null) {
             $site->setWebroot($qh->promptSiteWebroot($site));
         }
 
+        $this->configManager->addSite($site);
+        $this->configManager->dumpConfig();
+        $this->configManager->setDbHintInParametersYml($site);
 
-        $cm = $this->getContainer()->getConfigManager();
-        $cm->addSite($site);
-        $cm->dumpConfig();
-        $cm->setDbHintInParametersYml($site);
-
-        $vm = $this->getContainer()->getVagrantManager();
-        $vm->provision();
-        $vm->reload();
+        $this->vagrantManager->provision();
+        $this->vagrantManager->reload();
 
         return $site;
     }
