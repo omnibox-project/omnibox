@@ -8,7 +8,7 @@ class Site
     var $directory;
     var $webroot;
 
-    function __construct($name = '', $domain = '', $directory = '', $webroot = '')
+    function __construct($name = null, $domain = null, $directory = null, $webroot = null)
     {
         $this->directory = $directory;
         $this->domain = $domain;

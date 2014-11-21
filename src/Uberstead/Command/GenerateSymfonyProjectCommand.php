@@ -6,6 +6,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Process\Process;
+use Uberstead\Model\Site;
 
 class GenerateSymfonyProjectCommand extends BaseCommand
 {
@@ -40,7 +41,7 @@ class GenerateSymfonyProjectCommand extends BaseCommand
         $helper = $this->getHelper('question');
         $choice = $helper->ask($input, $output, $validator->createDistributionChoiceQuestion($array));
 
-        $site = $this->getContainer()->getSiteManager()->addSite($input, $output, $this->getHelper('question'), null, null, 'web');
+        $site = $this->getContainer()->getSiteManager()->addSite(new Site(null, null, null, 'web'));
         $directory = $site->getDirectory();
 
         if (!(count(scandir($directory)) == 2)) {

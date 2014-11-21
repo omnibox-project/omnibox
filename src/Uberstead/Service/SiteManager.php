@@ -72,26 +72,33 @@ class SiteManager
      * @param null $webroot
      * @return Site
      */
-    public function addSite(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper, $name = null, $directory = null, $webroot = null)
+    public function addSite(Site $site = null)
     {
+        if ($site === null) {
+            $site = new Site();
+        }
+
+        $questionHelper = $this->getContainer()->getHelperSet()->get('question');
+        $input = $this->getContainer()->getInputInterface();
+        $output = $this->getContainer()->getOutputInterface();
+
         $cm = $this->getContainer()->getConfigManager();
         $validator = $this->getContainer()->getValidator();
 
-        if ($name === null) {
-            $name = $questionHelper->ask($input, $output, $validator->createSiteNameQuestion());
+        if ($site->getName() === null) {
+            $site->setName($questionHelper->ask($input, $output, $validator->createSiteNameQuestion()));
         }
 
-        $domain = $questionHelper->ask($input, $output, $validator->createDomainQuestion($name));
+        $site->setDomain($questionHelper->ask($input, $output, $validator->createDomainQuestion($site->getName())));
 
-        if ($directory === null) {
-            $directory = $questionHelper->ask($input, $output, $validator->createDirectoryQuestion($name));
+        if ($site->getDirectory() === null) {
+            $site->setDirectory($questionHelper->ask($input, $output, $validator->createDirectoryQuestion($site->getName())));
         }
 
-        if ($webroot === null) {
-            $webroot = $questionHelper->ask($input, $output, $validator->createWebrootQuestion($directory));
+        if ($site->getWebroot() === null) {
+            $site->setWebroot($questionHelper->ask($input, $output, $validator->createWebrootQuestion($site->getDirectory())));
         }
 
-        $site = new Site($name, $domain, $directory, $webroot);
         $cm->addSite($site);
         $cm->dumpConfig();
         $cm->setDbHintInParametersYml($site);
