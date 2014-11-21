@@ -1,7 +1,7 @@
 <?php
 namespace Uberstead\Helper;
 
-use Uberstead\Container\ContainerAwareTrait;
+use Uberstead\DependencyInjection\ContainerAwareTrait;
 
 class ValidationHelper
 {

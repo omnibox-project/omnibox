@@ -1,7 +1,7 @@
 <?php
 namespace Uberstead\Service;
 
-use Uberstead\Container\ContainerAwareTrait;
+use Uberstead\DependencyInjection\ContainerAwareTrait;
 
 class VagrantManager
 {

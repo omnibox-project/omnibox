@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Parser;
-use Uberstead\Container\ContainerAwareTrait;
+use Uberstead\DependencyInjection\ContainerAwareTrait;
 use Uberstead\Model\Site;
 
 class SiteManager

@@ -1,8 +1,7 @@
 <?php
-namespace Uberstead\Container;
+namespace Uberstead\DependencyInjection;
 
 use Pimple\Container as PimpleContainer;
-use Uberstead\Service\Validator;
 use Uberstead\Service\ConfigManager;
 use Uberstead\Service\SiteManager;
 use Symfony\Component\Console\Input\InputInterface;
@@ -60,14 +59,6 @@ class Container extends PimpleContainer
     public function getOutputInterface()
     {
         return $this['output_interface'];
-    }
-
-    /**
-     * @return Validator
-     */
-    public function getValidator()
-    {
-        return $this['validator'];
     }
 
     /**

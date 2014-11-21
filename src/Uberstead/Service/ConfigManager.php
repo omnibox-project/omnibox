@@ -8,10 +8,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
-use Uberstead\Container\Container;
+use Uberstead\DependencyInjection\Container;
 use Uberstead\Model\Site;
 use Uberstead\Model\Config;
-use Uberstead\Container\ContainerAwareTrait;
+use Uberstead\DependencyInjection\ContainerAwareTrait;
 
 class ConfigManager
 {

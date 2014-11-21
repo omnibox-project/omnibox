@@ -1,8 +1,8 @@
 <?php
 
-namespace Uberstead\Container;
+namespace Uberstead\DependencyInjection;
 
-use Uberstead\Container\Container;
+use Uberstead\DependencyInjection\Container;
 
 trait ContainerAwareTrait
 {

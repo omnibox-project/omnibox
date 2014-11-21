@@ -8,10 +8,9 @@ use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Uberstead\Command\BaseCommand;
-use Uberstead\Container\Container;
+use Uberstead\DependencyInjection\Container;
 use Uberstead\Service\ConfigManager;
 use Uberstead\Service\SiteManager;
-use Uberstead\Service\Validator;
 use Uberstead\Service\VagrantManager;
 use Uberstead\Helper\ProcessHelper;
 use Uberstead\Helper\QuestionHelper;
@@ -43,7 +42,6 @@ $parameters = array(
 
 $container['parameters'] = $parameters;
 $container['config_manager'] = new ConfigManager();
-$container['validator'] = new Validator();
 $container['site_manager'] = new SiteManager();
 $container['vagrant_manager'] = new VagrantManager();
 $container['process_helper'] = new ProcessHelper();

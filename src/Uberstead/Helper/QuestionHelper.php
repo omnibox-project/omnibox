@@ -1,7 +1,7 @@
 <?php
 namespace Uberstead\Helper;
 
-use Uberstead\Container\ContainerAwareTrait;
+use Uberstead\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Console\Question\Question;
 use Uberstead\Model\Site;
 
