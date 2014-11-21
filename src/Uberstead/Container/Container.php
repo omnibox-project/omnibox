@@ -22,6 +22,14 @@ class Container extends PimpleContainer
     }
 
     /**
+     * @return QuestionHelper
+     */
+    public function getQuestionHelper()
+    {
+        return $this['question_helper'];
+    }
+
+    /**
      * @return VagrantManager
      */
     public function getVagrantManager()

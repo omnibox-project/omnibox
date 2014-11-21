@@ -3,17 +3,18 @@
 use Symfony\Component\Console\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Console\Event\ConsoleCommandEvent;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Uberstead\Command\BaseCommand;
 use Uberstead\Container\Container;
-use Symfony\Component\Console\Event\ConsoleCommandEvent;
-use Symfony\Component\Console\ConsoleEvents;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Uberstead\Service\ConfigManager;
 use Uberstead\Service\SiteManager;
 use Uberstead\Service\Validator;
-use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Uberstead\Service\VagrantManager;
 use Uberstead\Helper\ProcessHelper;
+use Uberstead\Helper\QuestionHelper;
 
 set_time_limit(0);
 require_once "vendor/autoload.php";
@@ -46,6 +47,7 @@ $container['validator'] = new Validator();
 $container['site_manager'] = new SiteManager();
 $container['vagrant_manager'] = new VagrantManager();
 $container['process_helper'] = new ProcessHelper();
+$container['question_helper'] = new QuestionHelper();
 $container->populateCointainerAwareServices();
 
 /*
