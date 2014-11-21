@@ -1,5 +1,5 @@
 <?php
-namespace Uberstead\Command;
+namespace Omnibox\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

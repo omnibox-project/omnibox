@@ -1,8 +1,8 @@
 <?php
-namespace Uberstead\Command;
+namespace Omnibox\Command;
 
 use Symfony\Component\Console\Command\Command;
-use Uberstead\DependencyInjection\Container;
+use Omnibox\DependencyInjection\Container;
 
 class BaseCommand extends Command
 {

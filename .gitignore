@@ -1,6 +1,6 @@
 /.vagrant
 /.idea
-uberstead.yaml
+omnibox.yaml
 .DS_Store
 /vendor/
 /composer.phar

@@ -1,9 +1,9 @@
 <?php
-namespace Uberstead\Helper;
+namespace Omnibox\Helper;
 
 use Symfony\Component\Console\Question\Question;
-use Uberstead\Model\Site;
-use Uberstead\Helper\CliHelper;
+use Omnibox\Model\Site;
+use Omnibox\Helper\CliHelper;
 
 class QuestionHelper
 {

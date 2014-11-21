@@ -1,15 +1,15 @@
 <?php
-namespace Uberstead\Command;
+namespace Omnibox\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UbersteadSettingsCommand extends BaseCommand
+class OmniboxSettingsCommand extends BaseCommand
 {
     protected function configure()
     {
         $this
-            ->setName('uberstead:settings')
+            ->setName('omnibox:settings')
             ->setDescription('Check for ssh keys and update ip, cpu, memory')
         ;
     }

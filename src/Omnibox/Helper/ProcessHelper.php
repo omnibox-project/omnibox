@@ -1,9 +1,9 @@
 <?php
-namespace Uberstead\Helper;
+namespace Omnibox\Helper;
 
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Output\OutputInterface;
-use Uberstead\Helper\CliHelper;
+use Omnibox\Helper\CliHelper;
 
 class ProcessHelper
 {

@@ -1,14 +1,14 @@
 <?php
-namespace Uberstead\DependencyInjection;
+namespace Omnibox\DependencyInjection;
 
 use Pimple\Container as PimpleContainer;
-use Uberstead\Service\ConfigManager;
-use Uberstead\Service\SiteManager;
+use Omnibox\Service\ConfigManager;
+use Omnibox\Service\SiteManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\HelperSet;
-use Uberstead\Service\VagrantManager;
-use Uberstead\Helper\CliHelper;
+use Omnibox\Service\VagrantManager;
+use Omnibox\Helper\CliHelper;
 
 class Container extends PimpleContainer
 {

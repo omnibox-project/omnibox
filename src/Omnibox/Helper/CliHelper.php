@@ -1,11 +1,11 @@
 <?php
-namespace Uberstead\Helper;
+namespace Omnibox\Helper;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\HelperSet;
-use Uberstead\Helper\ProcessHelper;
-use Uberstead\Helper\QuestionHelper;
+use Omnibox\Helper\ProcessHelper;
+use Omnibox\Helper\QuestionHelper;
 
 class CliHelper
 {

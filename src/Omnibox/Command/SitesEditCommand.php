@@ -1,5 +1,5 @@
 <?php
-namespace Uberstead\Command;
+namespace Omnibox\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -105,7 +105,7 @@ class SitesEditCommand extends BaseCommand
 //
 //        $dumper = new Dumper();
 //        $yaml = $dumper->dump($array, 3);
-//        file_put_contents('uberstead.yaml', $yaml);
+//        file_put_contents('omnibox.yaml', $yaml);
 //
 //        if ($updateNfsShares) {
 //            $this->updateNfsShares($input, $output);

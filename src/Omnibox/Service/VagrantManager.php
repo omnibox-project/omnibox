@@ -1,8 +1,8 @@
 <?php
-namespace Uberstead\Service;
+namespace Omnibox\Service;
 
-use Uberstead\Helper\CliHelper;
-use Uberstead\Service\ConfigManager;
+use Omnibox\Helper\CliHelper;
+use Omnibox\Service\ConfigManager;
 
 class VagrantManager
 {
@@ -86,9 +86,9 @@ class VagrantManager
     private function updateHostsFile()
     {
         // Create the sites row that will be inserted in the hosts file
-        $comment = "# Uberstead Sites";
+        $comment = "# Omnibox Sites";
 
-        // Remove old Uberstead configs and add the current config
+        // Remove old Omnibox configs and add the current config
         $fileContent = file_get_contents($this->getParameter('path_to_hosts_file'));
         $fileContent = preg_replace('/\n?.*' . preg_quote($comment) . '.*$/m', '', $fileContent);
         $fileContent = trim($fileContent, "\n");

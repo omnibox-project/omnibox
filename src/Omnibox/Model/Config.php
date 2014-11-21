@@ -1,7 +1,7 @@
 <?php
-namespace Uberstead\Model;
+namespace Omnibox\Model;
 
-use Uberstead\Model\Site;
+use Omnibox\Model\Site;
 
 class Config
 {

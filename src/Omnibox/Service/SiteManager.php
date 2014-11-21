@@ -1,15 +1,15 @@
 <?php
-namespace Uberstead\Service;
+namespace Omnibox\Service;
 
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Uberstead\Model\Site;
-use Uberstead\Service\ConfigManager;
-use Uberstead\Service\VagrantManager;
-use Uberstead\Helper\CliHelper;
+use Omnibox\Model\Site;
+use Omnibox\Service\ConfigManager;
+use Omnibox\Service\VagrantManager;
+use Omnibox\Helper\CliHelper;
 
 class SiteManager
 {

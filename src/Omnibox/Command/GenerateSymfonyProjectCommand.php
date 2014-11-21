@@ -1,12 +1,12 @@
 <?php
-namespace Uberstead\Command;
+namespace Omnibox\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Process\Process;
-use Uberstead\Model\Site;
+use Omnibox\Model\Site;
 
 class GenerateSymfonyProjectCommand extends BaseCommand
 {
@@ -14,7 +14,7 @@ class GenerateSymfonyProjectCommand extends BaseCommand
     {
         $this
             ->setName('generate:symfony_project')
-            ->setDescription('Update hosts file and nginx config inside Uberstead')
+            ->setDescription('Update hosts file and nginx config inside Omnibox')
         ;
     }
 

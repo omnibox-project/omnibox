@@ -1,5 +1,5 @@
 <?php
-namespace Uberstead\Service;
+namespace Omnibox\Service;
 
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
@@ -8,9 +8,9 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Yaml\Dumper;
 use Symfony\Component\Yaml\Parser;
-use Uberstead\Model\Site;
-use Uberstead\Model\Config;
-use Uberstead\Helper\CliHelper;
+use Omnibox\Model\Site;
+use Omnibox\Model\Config;
+use Omnibox\Helper\CliHelper;
 
 class ConfigManager
 {
@@ -148,7 +148,7 @@ class ConfigManager
 
         $parametersYml = $site->getDirectory() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'parameters.yml';
         if (file_exists($parametersYml)) {
-            $comment = "#Uberstead Config Hint#    ";
+            $comment = "#Omnibox Config Hint#    ";
             $fileContents = file($parametersYml);
             foreach ($fileContents as $key => $line) {
                 if (strpos($line, $comment) !== false) {

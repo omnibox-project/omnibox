@@ -1,8 +1,8 @@
-class Uberstead
-  def Uberstead.configure(config, settings)
+class Omnibox
+  def Omnibox.configure(config, settings)
     # Configure The Box
     config.vm.box = "ivonunes/homestead"
-    config.vm.hostname = "uberstead"
+    config.vm.hostname = "omnibox"
 
     # Configure A Private Network IP
     config.vm.network :private_network, ip: settings["ip"] ||= "192.168.10.10"

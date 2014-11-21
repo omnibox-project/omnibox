@@ -1,5 +1,5 @@
 <?php
-namespace Uberstead\Model;
+namespace Omnibox\Model;
 
 class Site
 {

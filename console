@@ -7,14 +7,14 @@ use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Event\ConsoleTerminateEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Uberstead\Command\BaseCommand;
-use Uberstead\DependencyInjection\Container;
-use Uberstead\Service\ConfigManager;
-use Uberstead\Service\SiteManager;
-use Uberstead\Service\VagrantManager;
-use Uberstead\Helper\ProcessHelper;
-use Uberstead\Helper\QuestionHelper;
-use Uberstead\Helper\CliHelper;
+use Omnibox\Command\BaseCommand;
+use Omnibox\DependencyInjection\Container;
+use Omnibox\Service\ConfigManager;
+use Omnibox\Service\SiteManager;
+use Omnibox\Service\VagrantManager;
+use Omnibox\Helper\ProcessHelper;
+use Omnibox\Helper\QuestionHelper;
+use Omnibox\Helper\CliHelper;
 
 set_time_limit(0);
 require_once "vendor/autoload.php";
@@ -30,7 +30,7 @@ $container['parameters'] = function ($c) {
         'path_to_exports_file' => '/etc/exports',
         'path_to_public_key_file' => $_SERVER['HOME'].'/.ssh/id_rsa.pub',
         'system_user' => get_current_user(),
-        'path_to_config_file' => 'uberstead.yaml',
+        'path_to_config_file' => 'omnibox.yaml',
         'default_config_values' => array(
             'ip' => '192.168.10.10',
             'memory' => '2048',
@@ -91,7 +91,7 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
             // Run update config of config file isn't valid, or config command han been executed
             /** @var ConfigManager $cm */
             $cm = $container['config_manager'];
-            if (!$cm->configIsValid() || $command->getName() === "uberstead:settings") {
+            if (!$cm->configIsValid() || $command->getName() === "omnibox:settings") {
                 $cm->updateConfig();
                 $cm->provision();
                 $cm->reload();

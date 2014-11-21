@@ -16,7 +16,7 @@ Homestead inspired development environment for Symfony.
 ## Initial setup
 
 - Run `composer install`
-- Setup Uberstead with `sudo php console uberstead:settings`
+- Setup Omnibox with `sudo php console omnibox:settings`
 - Run `vagrant up`
 - Add your first site with `sudo php console site:add`
 

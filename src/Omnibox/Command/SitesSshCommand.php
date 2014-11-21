@@ -1,5 +1,5 @@
 <?php
-namespace Uberstead\Command;
+namespace Omnibox\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -9,15 +9,15 @@ use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\ProcessPipes;
 use Symfony\Component\Process\ProcessUtils;
 
-class SitesConsoleCommand extends BaseCommand
+class SitesSshCommand extends BaseCommand
 {
     protected function configure()
     {
         $this
-            ->setName('sites:console')
+            ->setName('sites:ssh')
             ->addArgument('site', InputArgument::REQUIRED)
             ->addArgument('cmd', InputArgument::IS_ARRAY)
-            ->setDescription('Run app/console commands in a specific project')
+            ->setDescription('Run ssh commands on a specific site')
         ;
     }
 
@@ -27,11 +27,11 @@ class SitesConsoleCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = $this->getContainer()->getConfigManager()->getConfig();
-        $sites = $config->getSites();
+        $array = $this->getConfig();
+        $sites = $array['sites'];
 
         foreach ($sites as $site) {
-            if ($site->getName() === $input->getArgument('site')) {
+            if ($site['name'] === $input->getArgument('site')) {
                 $process = new ProcessBuilder();
                 foreach ($_ENV as $k => $v) {
                     $process->setEnv($k, $v);
@@ -42,9 +42,9 @@ class SitesConsoleCommand extends BaseCommand
                     array(
                         'ssh',
                         '-t',
-                        'vagrant@'.$config->getIp(),
+                        'vagrant@'.$array['ip'],
                         '--',
-                        'cd /home/vagrant/' . $site['name'] . ' && php app/console ' . $command . ' 2>&1'
+                        'cd /home/vagrant/' . $site['name'] . ' && ' . $command . ' 2>&1'
                     )
                 );
                 $proc = $process->getProcess();
