@@ -30,16 +30,12 @@ class GenerateSymfonyProjectCommand extends BaseCommand
             '7' => array('  7', 'Symfony Rapid Development Edition', 'https://github.com/rgies/symfony'),
         );
 
-        $validator = $this->getContainer()->getValidator();
         /** @var TableHelper $table */
         $table = $this->getHelper('table');
-        $table
-            ->setHeaders(array('Choice', 'Distribution', 'Description'))
-            ->setRows($array);
+        $table->setHeaders(array('Choice', 'Distribution', 'Description'))->setRows($array);
         $table->render($output);
 
-        $helper = $this->getHelper('question');
-        $choice = $helper->ask($input, $output, $validator->createDistributionChoiceQuestion($array));
+        $choice = $this->getContainer()->getQuestionHelper()->promptDistributionChoice($array);
 
         $site = $this->getContainer()->getSiteManager()->addSite(new Site(null, null, null, 'web'));
         $directory = $site->getDirectory();

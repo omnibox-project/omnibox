@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\HelperSet;
 use Uberstead\Service\VagrantManager;
 use Uberstead\Helper\ProcessHelper;
+use Uberstead\Helper\QuestionHelper;
 
 class Container extends PimpleContainer
 {

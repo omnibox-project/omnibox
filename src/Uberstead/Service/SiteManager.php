@@ -78,33 +78,32 @@ class SiteManager
             $site = new Site();
         }
 
-        $questionHelper = $this->getContainer()->getHelperSet()->get('question');
-        $input = $this->getContainer()->getInputInterface();
-        $output = $this->getContainer()->getOutputInterface();
+        $qh = $this->getContainer()->getQuestionHelper();
 
-        $cm = $this->getContainer()->getConfigManager();
-        $validator = $this->getContainer()->getValidator();
 
         if ($site->getName() === null) {
-            $site->setName($questionHelper->ask($input, $output, $validator->createSiteNameQuestion()));
+            $site->setName($qh->promptSiteName());
         }
 
-        $site->setDomain($questionHelper->ask($input, $output, $validator->createDomainQuestion($site->getName())));
+        $site->setDomain($qh->promptSiteDomain($site));
 
         if ($site->getDirectory() === null) {
-            $site->setDirectory($questionHelper->ask($input, $output, $validator->createDirectoryQuestion($site->getName())));
+            $site->setDirectory($qh->promptSiteDirectory($site));
         }
 
         if ($site->getWebroot() === null) {
-            $site->setWebroot($questionHelper->ask($input, $output, $validator->createWebrootQuestion($site->getDirectory())));
+            $site->setWebroot($qh->promptSiteWebroot($site));
         }
 
+
+        $cm = $this->getContainer()->getConfigManager();
         $cm->addSite($site);
         $cm->dumpConfig();
         $cm->setDbHintInParametersYml($site);
 
-        $this->getContainer()->getVagrantManager()->provision();
-        $this->getContainer()->getVagrantManager()->reload();
+        $vm = $this->getContainer()->getVagrantManager();
+        $vm->provision();
+        $vm->reload();
 
         return $site;
     }
