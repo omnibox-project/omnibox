@@ -1,11 +1,11 @@
 <?php
 namespace Uberstead\Service;
 
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Uberstead\Container\ContainerAwareTrait;
 
 class VagrantManager
 {
-    use \Uberstead\Container\ContainerAwareTrait;
+    use ContainerAwareTrait;
 
     private $provision = false;
     private $reload = false;

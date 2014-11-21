@@ -1,13 +1,13 @@
 <?php
 namespace Uberstead\Helper;
 
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Uberstead\Container\ContainerAwareTrait;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ProcessHelper
 {
-    use \Uberstead\Container\ContainerAwareTrait;
+    use ContainerAwareTrait;
 
     public function runWithProgressBar($command)
     {
