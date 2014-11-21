@@ -1,6 +1,6 @@
-# Uberstead
+# Omnibox
 
-Homestead on steriods for Symfony. Based on ivonunes/homestead.
+Homestead inspired development environment for Symfony.
 
 ## Features
 
