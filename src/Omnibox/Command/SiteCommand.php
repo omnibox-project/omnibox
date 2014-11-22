@@ -13,12 +13,19 @@ class SiteCommand extends BaseCommand
             ->setName('site')
             ->setDescription('Manages sites: add, remove, list')
             ->addArgument('subcommand')
+            ->setSubcommands(
+                array(
+                    'add' => 'Add a site',
+                    'remove' => 'Remove a site',
+                    'list' => 'List all sites'
+                )
+            )
         ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->validateSubcommand(array('add', 'remove', 'list'));
+        $this->runSubCommand();
     }
 
     public function _add()
