@@ -88,13 +88,15 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
                 $command->setContainer($container);
             }
 
-            // Run update config of config file isn't valid, or config command han been executed
+            // Re-create config if config file isn't valid, or create config if config command han been executed
             /** @var ConfigManager $cm */
+            /** @var VagrantManager $vm */
             $cm = $container['config_manager'];
+            $vm = $container['vagrant_manager'];
             if (!$cm->configIsValid() || $command->getName() === "omnibox:settings") {
                 $cm->updateConfig();
-                $cm->provision();
-                $cm->reload();
+                $vm->provision();
+                $vm->reload();
             }
         }
     });
