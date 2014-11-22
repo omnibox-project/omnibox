@@ -5,6 +5,7 @@
         "symfony/finder": "~2.5",
         "symfony/yaml": "~2.5",
         "symfony/process": "~2.5",
+        "symfony/event-dispatcher": "~2.5",
         "pimple/pimple": "~3.0"
     },
     "autoload": {

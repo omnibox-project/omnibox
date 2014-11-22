@@ -32,12 +32,10 @@ See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 - Add support for domain aliases
 - Implement Vagrant-hostmanager?
 - Add tests
-- Run initail setup (settings) command after composer has installed for the first time
-- Confirm delete project, ask if project files should be removed as well
-- Validate config input for IP, memory and cpus
-- Validate config file, dont just check if it exists
+vagr- Confirm delete project, ask if project files should be removed as well
 - Ask if doctrine migrations should be migrated when settings up a new project with migrations
 - Don't just check if config exists, check validate its contents and generate a new if there are any errors
+- Validate config input for IP, memory and cpus
 - When choosing domain or path, list the default options and let the user pick one with a number or enter their own
 - Make OS independent, but keep support for parallels in OSX
 - Integrate vagrant share support. Add *.vagrantshare.com to the nginx conf and restart nginx.

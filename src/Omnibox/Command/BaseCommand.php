@@ -49,4 +49,26 @@ class BaseCommand extends Command
     {
         $this->commandForTerminateEvent = $commandForTerminateEvent;
     }
+
+    public function validateSubcommand($availableSubCommands)
+    {
+        $output = $this->getContainer()->getCliHelper()->getOutputInterface();
+        $input = $this->getContainer()->getCliHelper()->getInputInterface();
+
+        if (!in_array($input->getArgument('subcommand'), $availableSubCommands)) {
+            $output->writeln('');
+            $output->writeln('<comment>Usage:</comment>');
+            $output->writeln(sprintf('  omnibox %s <subcommand> [<args>]', $this->getName()));
+            $output->writeln('');
+            $output->writeln('<comment>Available subcommands:</comment>');
+            foreach ($availableSubCommands as $command) {
+                $output->writeln(sprintf('  <info>%s</info>', $command));
+            }
+            $output->writeln('');
+            $output->writeln(sprintf('For help on any individual subcommand run `omnibox %s <subcommand> -h`', $this->getName()));
+            die();
+        }
+
+        $this->{'_'.$input->getArgument('subcommand')}();
+    }
 }
