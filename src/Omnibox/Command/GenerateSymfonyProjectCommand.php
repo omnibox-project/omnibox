@@ -38,6 +38,8 @@ class GenerateSymfonyProjectCommand extends BaseCommand
         $choice = $this->getContainer()->getCliHelper()->getQuestionHelper()->promptDistributionChoice($array);
 
         $site = $this->getContainer()->getSiteManager()->addSite(new Site(null, null, null, 'web'));
+        $site = $this->getContainer()->getSiteManager()->setDbInParametersYml($site);
+
         $directory = $site->getDirectory();
 
         if (!(count(scandir($directory)) == 2)) {

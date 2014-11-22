@@ -131,41 +131,19 @@ class ConfigManager
         }
     }
 
-    public function dumpConfig()
+    private function dumpYml($dataArray, $filepath)
     {
         $dumper = new Dumper();
-        $yaml = $dumper->dump($this->getConfig()->toArray(), 3);
-        file_put_contents($this->getParameter('path_to_config_file'), $yaml);
+        $yaml = $dumper->dump($dataArray, 3);
+        file_put_contents($filepath, $yaml);
 
-        chmod($this->getParameter('path_to_config_file'), 0664);
-        chown($this->getParameter('path_to_config_file'), $this->getParameter('system_user'));
+        chmod($filepath, 0664);
+        chown($filepath, $this->getParameter('system_user'));
     }
 
-    public function setDbHintInParametersYml(Site $site)
+    public function dumpConfig()
     {
-        $name = str_replace(" ", "_", $site->getName());
-        $name = strtolower(preg_replace("/[^a-zA-Z0-9_]+/", "", $name));
-
-        $parametersYml = $site->getDirectory() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'parameters.yml';
-        if (file_exists($parametersYml)) {
-            $comment = "#Omnibox Config Hint#    ";
-            $fileContents = file($parametersYml);
-            foreach ($fileContents as $key => $line) {
-                if (strpos($line, $comment) !== false) {
-                    unset($fileContents[$key]);
-                }
-            }
-
-            $fileContents[] = $comment . "database_host: 127.0.0.1\n";
-            $fileContents[] = $comment . "database_port: 3306\n";
-            $fileContents[] = $comment . "database_name: ".$name."\n";
-            $fileContents[] = $comment . "database_user: homestead\n";
-            $fileContents[] = $comment . "database_password: secret\n";
-
-            $fileContents = implode("", $fileContents);
-            $fileContents = trim($fileContents, "\n")."\n";
-            file_put_contents($parametersYml, $fileContents);
-        }
+        $this->dumpYml($this->getConfig()->toArray(), $this->getParameter('path_to_config_file'));
     }
 
     public function createRowForHostsFile()

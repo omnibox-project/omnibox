@@ -32,7 +32,6 @@ See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 - Add support for domain aliases
 - Implement Vagrant-hostmanager?
 - Add tests
-- Edit, don't only add hints in, parameters.yml when generating a new project
 - Run initail setup (settings) command after composer has installed for the first time
 - Confirm delete project, ask if project files should be removed as well
 - Validate config input for IP, memory and cpus
@@ -45,3 +44,6 @@ See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 - Create a output format that is used everywhere
 - Send usage statistics for presenting on website, if user opts in
 - Delete site by typing the project name instead of id in the list, to avoid accidental deletion
+- Remove input and output arguments from methods
+- Check if database exists when setting up a new project -> promt for removal or add suffix
+- Add default project directory to config

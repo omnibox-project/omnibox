@@ -1,12 +1,9 @@
 <?php
 namespace Omnibox\Command;
 
-use Symfony\Component\Console\Input\InputArgument;
+use Omnibox\Model\Site;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Yaml\Parser;
-use Symfony\Component\Yaml\Dumper;
 
 class SitesAddCommand extends BaseCommand
 {
@@ -21,6 +18,7 @@ class SitesAddCommand extends BaseCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<info>>>> Add Site <<<</info>');
-        $this->getContainer()->getSiteManager()->addSite();
+        $site = $this->getContainer()->getSiteManager()->addSite();
+        $this->getContainer()->getSiteManager()->setDbInParametersYml($site, true);
     }
 }

@@ -113,11 +113,48 @@ class SiteManager
 
         $this->configManager->addSite($site);
         $this->configManager->dumpConfig();
-        $this->configManager->setDbHintInParametersYml($site);
 
         $this->vagrantManager->provision();
         $this->vagrantManager->reload();
 
         return $site;
     }
+
+    public function setDbInParametersYml(Site $site, $asHint = false)
+    {
+        $parametersYml = $site->getDirectory() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'parameters.yml';
+        if (file_exists($parametersYml)) {
+            if ($asHint) {
+                $comment = "#Omnibox Config Hint#    ";
+                $fileContents = file($parametersYml);
+                foreach ($fileContents as $key => $line) {
+                    if (strpos($line, $comment) !== false) {
+                        unset($fileContents[$key]);
+                    }
+                }
+
+                $fileContents[] = $comment . "database_host: 127.0.0.1\n";
+                $fileContents[] = $comment . "database_port: 3306\n";
+                $fileContents[] = $comment . "database_name: ".$site->getName()."\n";
+                $fileContents[] = $comment . "database_user: homestead\n";
+                $fileContents[] = $comment . "database_password: secret\n";
+
+                $fileContents = implode("", $fileContents);
+                $fileContents = trim($fileContents, "\n")."\n";
+                file_put_contents($parametersYml, $fileContents);
+            } else {
+                $yaml = new Parser();
+                $dataArray = $yaml->parse(file_get_contents($parametersYml));
+
+                $dataArray['parameters']['database_host'] = '127.0.0.1';
+                $dataArray['parameters']['database_port'] = '3306';
+                $dataArray['parameters']['database_name'] = $site->getName();
+                $dataArray['parameters']['database_user'] = 'homestead';
+                $dataArray['parameters']['database_password'] = 'secret';
+
+                $this->dumpYml($dataArray, $parametersYml);
+            }
+        }
+    }
+
 }
