@@ -9,19 +9,47 @@ class BaseCommand extends Command
     private $commandForTerminateEvent = null;
 
     /**
+     * @var bool
+     */
+    private $requiresRootAccess;
+
+    /**
      * @var array
      */
-    protected $subcommands;
+    private $subcommands;
 
     /**
      * @var Container
      */
-    protected $container;
+    private $container;
 
     function __construct()
     {
         $this->subcommands = array();
+        $this->requiresSudo = false;
         parent::__construct();
+    }
+
+    public function requiresRootAccess() {
+        $this->setRequiresRootAccess(true);
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getRequiresRootAccess()
+    {
+        return $this->requiresRootAccess;
+    }
+
+    /**
+     * @param boolean $requiresRootAccess
+     */
+    public function setRequiresRootAccess($requiresRootAccess)
+    {
+        $this->requiresRootAccess = $requiresRootAccess;
     }
 
     /**

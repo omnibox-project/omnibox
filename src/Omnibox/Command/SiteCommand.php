@@ -13,6 +13,7 @@ class SiteCommand extends BaseCommand
             ->setName('site')
             ->setDescription('Manages sites: add, remove, list')
             ->addArgument('subcommand')
+            ->requiresRootAccess()
             ->setSubcommands(
                 array(
                     'add' => 'Add a site',

@@ -73,7 +73,7 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
         $ch->setInputInterface($event->getInput());
         $ch->setOutputInterface($event->getOutput());
 
-        if (posix_getuid() != 0) {
+        if (method_exists($command, 'getRequiresSudo') && $command->getRequiresRootAccess() === true && posix_getuid() != 0) {
             $event->getOutput()->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
             die();
         }
