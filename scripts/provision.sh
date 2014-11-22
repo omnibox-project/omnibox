@@ -11,6 +11,12 @@ mysql --user="root" --password="" -e "UPDATE mysql.user SET Password='' WHERE Us
 mysql --user="root" --password="" -e "FLUSH PRIVILEGES;" 2>/dev/null
 service mysql reload
 
+# Remove old app/console shortcuts
+rm -f /vagrant/app/*
+
+# Remove old app/ssh shortcuts
+rm -f /vagrant/ssh/*
+
 # Remove old nginx configurations
 rm -R -f /etc/nginx/sites-available/*
 rm -R -f /etc/nginx/sites-enabled/*
