@@ -6,9 +6,25 @@ use Omnibox\Service\ConfigManager;
 
 class VagrantManager
 {
+    /**
+     * @var bool
+     */
     private $provision;
 
+    /**
+     * @var bool
+     */
     private $reload;
+
+    /**
+     * @var bool
+     */
+    private $halt;
+
+    /**
+     * @var bool
+     */
+    private $up;
 
     /**
      * @var CliHelper
@@ -32,6 +48,8 @@ class VagrantManager
         $this->cliHelper = $cliHelper;
         $this->provision = false;
         $this->reload = false;
+        $this->halt = false;
+        $this->up = false;
     }
 
     /**
@@ -45,6 +63,12 @@ class VagrantManager
 
     public function executeCommands()
     {
+        if ($this->up)
+            $this->runUp();
+
+        if ($this->halt)
+            $this->runHalt();
+
         if ($this->reload)
             $this->runReload();
 
@@ -62,6 +86,16 @@ class VagrantManager
         $this->reload = true;
     }
 
+    public function up()
+    {
+        $this->up = true;
+    }
+
+    public function halt()
+    {
+        $this->halt = true;
+    }
+
     private function runProvision()
     {
         $output = $this->cliHelper->getOutputInterface();
@@ -70,7 +104,7 @@ class VagrantManager
         $this->updateHostsFile();
 
         $output->writeln('<info>Running "vagrant provision"...</info>');
-        $this->cliHelper->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "vagrant provision"');
+        $this->cliHelper->getProcessHelper()->runWithProgressBar($this->wrapCommandIfSudo('vagrant provision'));
     }
 
     private function runReload()
@@ -80,7 +114,25 @@ class VagrantManager
         $this->removeInvalidFoldersFromExports();
 
         $output->writeln('<info>Running "vagrant reload"...</info>');
-        $this->cliHelper->getProcessHelper()->runWithProgressBar('su $SUDO_USER -c "vagrant reload"');
+        $this->cliHelper->getProcessHelper()->runWithProgressBar($this->wrapCommandIfSudo('vagrant reload'));
+    }
+
+    private function runHalt()
+    {
+        $output = $this->cliHelper->getOutputInterface();
+
+        $output->writeln('<info>Running "vagrant halt"...</info>');
+        $this->cliHelper->getProcessHelper()->runWithProgressBar($this->wrapCommandIfSudo('vagrant halt'));
+    }
+
+    private function runUp()
+    {
+        $output = $this->cliHelper->getOutputInterface();
+
+        $this->removeInvalidFoldersFromExports();
+
+        $output->writeln('<info>Running "vagrant up"...</info>');
+        $this->cliHelper->getProcessHelper()->runWithProgressBar($this->wrapCommandIfSudo('vagrant up'));
     }
 
     private function updateHostsFile()
@@ -112,5 +164,14 @@ class VagrantManager
             }
         }
         file_put_contents($this->getParameter('path_to_exports_file'), implode("", $fileContents));
+    }
+
+    private function wrapCommandIfSudo($command)
+    {
+        if (posix_getuid() != 0) {
+            return $command;
+        } else {
+            return sprintf('su $SUDO_USER -c "%s"', $command);
+        }
     }
 }

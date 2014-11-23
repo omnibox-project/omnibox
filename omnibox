@@ -12,8 +12,6 @@ use Omnibox\DependencyInjection\Container;
 use Omnibox\Service\ConfigManager;
 use Omnibox\Service\SiteManager;
 use Omnibox\Service\VagrantManager;
-use Omnibox\Helper\ProcessHelper;
-use Omnibox\Helper\QuestionHelper;
 use Omnibox\Helper\CliHelper;
 
 set_time_limit(0);
@@ -73,7 +71,7 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
         $ch->setInputInterface($event->getInput());
         $ch->setOutputInterface($event->getOutput());
 
-        if (method_exists($command, 'getRequiresSudo') && $command->getRequiresRootAccess() === true && posix_getuid() != 0) {
+        if (method_exists($command, 'getRequiresRootAccess') && $command->getRequiresRootAccess() === true && posix_getuid() != 0) {
             $event->getOutput()->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
             die();
         }
@@ -132,10 +130,10 @@ foreach ($commandFiles as $file) {
     }
 }
 
-//---------------------------
-// Run Application
-//---------------------------
-$console = new Application();
+/**
+ * Run Application
+ */
+$console = new Application('Omnibox', 'BETA');
 $console->setDispatcher($dispatcher);
 $console->addCommands($commands);
 $console->run();
