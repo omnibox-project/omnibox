@@ -32,7 +32,7 @@ See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 - Add support for domain aliases
 - Implement Vagrant-hostmanager?
 - Add tests
-vagr- Confirm delete project, ask if project files should be removed as well
+- Confirm delete project, ask if project files should be removed as well
 - Ask if doctrine migrations should be migrated when settings up a new project with migrations
 - Don't just check if config exists, check validate its contents and generate a new if there are any errors
 - Validate config input for IP, memory and cpus
@@ -45,3 +45,4 @@ vagr- Confirm delete project, ask if project files should be removed as well
 - Remove input and output arguments from methods
 - Check if database exists when setting up a new project -> promt for removal or add suffix
 - Add default project directory to config
+- Do not restart nginx each time serve.sh is run when running provision.

@@ -5,6 +5,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\ProcessBuilder;
 
 class SiteCommand extends BaseCommand
 {
@@ -20,7 +21,8 @@ class SiteCommand extends BaseCommand
                 array(
                     'add' => 'Add a site',
                     'remove' => 'Remove a site',
-                    'list' => 'List all sites'
+                    'list' => 'List all sites',
+                    'ssh' => 'Run commands in sitefolder inside Omnibox'
                 )
             )
         ;
@@ -52,5 +54,43 @@ class SiteCommand extends BaseCommand
         $output = $this->getContainer()->getCliHelper()->getOutputInterface();
         $input = $this->getContainer()->getCliHelper()->getInputInterface();
         $this->getContainer()->getSiteManager()->listSites($input, $output, $this->getHelper('table'));
+    }
+
+    public function _ssh()
+    {
+        $output = $this->getContainer()->getCliHelper()->getOutputInterface();
+        $input = $this->getContainer()->getCliHelper()->getInputInterface();
+
+        $config = $this->getContainer()->getConfigManager()->getConfig();
+        $arguments = $input->getArgument('arguments');
+
+        foreach ($config->getSitesArray() as $site) {
+            if ($site['name'] === $arguments[0]) {
+                unset($arguments[0]);
+                $process = new ProcessBuilder();
+                foreach ($_ENV as $k => $v) {
+                    $process->setEnv($k, $v);
+                }
+                $process->setWorkingDirectory('.');
+                $command = implode(' ', $arguments);
+                $process->setPrefix(
+                    array(
+                        'ssh',
+                        '-t',
+                        'vagrant@'.$config->getIp(),
+                        '--',
+                        'cd /home/vagrant/' . $site['name'] . ' && ' . $command . ' 2>&1'
+                    )
+                );
+                $proc = $process->getProcess();
+                $proc->setCommandLine($proc->getCommandLine().' 2>/dev/null');
+                $proc->setTty(true);
+                $proc->run();
+
+                return;
+            }
+        }
+
+        throw new \RuntimeException('Site not found.');
     }
 }

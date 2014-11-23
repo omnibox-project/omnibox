@@ -69,7 +69,7 @@ chmod a+x "/vagrant/app/$3"
 
 # Create shortcut in ssh/ for executing ssh commands for this site
 template="#!/bin/sh
-php console sites:ssh $3 -- \"\$*\"
+php omnibox site ssh $3 -- \"\$*\"
 "
 echo "$template" > "/vagrant/ssh/$3"
 chmod a+x "/vagrant/ssh/$3"
