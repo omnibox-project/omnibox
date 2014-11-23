@@ -4,13 +4,13 @@ namespace Omnibox\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class OmniboxSettingsCommand extends BaseCommand
+class ConfigCommand extends BaseCommand
 {
     protected function configure()
     {
         $this
-            ->setName('omnibox:settings')
-            ->setDescription('Check for ssh keys and update ip, cpu, memory')
+            ->setName('config')
+            ->setDescription('Update or create Omnibox configuration')
         ;
     }
 

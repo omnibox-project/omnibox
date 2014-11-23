@@ -93,7 +93,7 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
             /** @var VagrantManager $vm */
             $cm = $container['config_manager'];
             $vm = $container['vagrant_manager'];
-            if (!$cm->configIsValid() || $command->getName() === "omnibox:settings") {
+            if (!$cm->configIsValid() || $command->getName() === "config") {
                 $cm->updateConfig();
                 $vm->provision();
                 $vm->reload();
