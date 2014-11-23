@@ -46,3 +46,4 @@ See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 - Check if database exists when setting up a new project -> promt for removal or add suffix
 - Add default project directory to config
 - Do not restart nginx each time serve.sh is run when running provision.
+- Site ssh and console commands fail when running with sudo - needs correct ssh key

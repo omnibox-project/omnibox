@@ -22,7 +22,8 @@ class SiteCommand extends BaseCommand
                     'add' => 'Add a site',
                     'remove' => 'Remove a site',
                     'list' => 'List all sites',
-                    'ssh' => 'Run commands in sitefolder inside Omnibox'
+                    'ssh' => 'Run ssh commands on a specific site',
+                    'console' => 'Run app/console commands in a specific project'
                 )
             )
         ;
@@ -58,7 +59,6 @@ class SiteCommand extends BaseCommand
 
     public function _ssh()
     {
-        $output = $this->getContainer()->getCliHelper()->getOutputInterface();
         $input = $this->getContainer()->getCliHelper()->getInputInterface();
 
         $config = $this->getContainer()->getConfigManager()->getConfig();
@@ -80,6 +80,43 @@ class SiteCommand extends BaseCommand
                         'vagrant@'.$config->getIp(),
                         '--',
                         'cd /home/vagrant/' . $site['name'] . ' && ' . $command . ' 2>&1'
+                    )
+                );
+                $proc = $process->getProcess();
+                $proc->setCommandLine($proc->getCommandLine().' 2>/dev/null');
+                $proc->setTty(true);
+                $proc->run();
+
+                return;
+            }
+        }
+
+        throw new \RuntimeException('Site not found.');
+    }
+
+    public function _console()
+    {
+        $input = $this->getContainer()->getCliHelper()->getInputInterface();
+
+        $config = $this->getContainer()->getConfigManager()->getConfig();
+        $arguments = $input->getArgument('arguments');
+
+        foreach ($config->getSitesArray() as $site) {
+            if ($site['name'] === $arguments[0]) {
+                unset($arguments[0]);
+                $process = new ProcessBuilder();
+                foreach ($_ENV as $k => $v) {
+                    $process->setEnv($k, $v);
+                }
+                $process->setWorkingDirectory('.');
+                $command = implode(' ', $arguments);
+                $process->setPrefix(
+                    array(
+                        'ssh',
+                        '-t',
+                        'vagrant@'.$config->getIp(),
+                        '--',
+                        'cd /home/vagrant/' . $site['name'] . ' && php app/console ' . $command . ' 2>&1'
                     )
                 );
                 $proc = $process->getProcess();
