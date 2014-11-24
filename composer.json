@@ -12,5 +12,13 @@
         "psr-0": {
             "": "src"
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "php omnibox init"
+        ],
+        "post-update-cmd": [
+            "php omnibox init"
+        ]
     }
 }
