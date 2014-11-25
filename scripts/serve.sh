@@ -62,7 +62,7 @@ mysql --user="root" --password="" -e "CREATE DATABASE IF NOT EXISTS $name;"
 
 # Create shortcut in app/ for calling app/console for this site
 template="#!/bin/sh
-php console site console $3 -- \"\$*\"
+php omnibox site console $3 -- \"\$*\"
 "
 echo "$template" > "/vagrant/app/$3"
 chmod a+x "/vagrant/app/$3"
