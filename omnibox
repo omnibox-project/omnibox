@@ -71,9 +71,18 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
         $ch->setInputInterface($event->getInput());
         $ch->setOutputInterface($event->getOutput());
 
-        if (method_exists($command, 'getRequiresRootAccess') && $command->getRequiresRootAccess() === true && posix_getuid() != 0) {
-            $event->getOutput()->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
-            die();
+        if (method_exists($command, 'getRequiresRootAccess') && $command->getRequiresRootAccess() !== null) {
+            $event->getInput()->bind($command->getDefinition());
+
+            $arguments = $event->getInput()->getArgument('arguments');
+            $subcommand = $arguments[0];
+
+            if ($command->getRequiresRootAccess() === BaseCommand::ALL_COMMANDS_NEEDS_ROOT_ACCESS || in_array($subcommand, $command->getRequiresRootAccess())) {
+                if (posix_getuid() != 0) {
+                    $event->getOutput()->writeln('This command needs access to /etc/hosts and /etc/exports. Please run as root (sudo).');
+                    die();
+                }
+            }
         }
 
         if (!file_exists($container->getParameter('path_to_public_key_file'))) {

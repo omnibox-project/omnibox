@@ -17,7 +17,6 @@ class SiteCommand extends BaseCommand
             ->setDescription('Manages sites: add, remove, list')
             ->addArgument('subcommand')
             ->addArgument('arguments', InputArgument::IS_ARRAY)
-            ->requiresRootAccess()
             ->setSubcommands(
                 array(
                     'add' => 'Add a site',
@@ -26,6 +25,13 @@ class SiteCommand extends BaseCommand
                     'generate' => 'Generate a new Symfony2 site',
                     'ssh' => 'Run ssh commands on a specific site',
                     'console' => 'Run app/console commands in a specific project'
+                )
+            )
+            ->requiresRootAccess(
+                array(
+                    'add',
+                    'remove',
+                    'generate',
                 )
             )
         ;
@@ -155,7 +161,7 @@ class SiteCommand extends BaseCommand
         $choice = $this->getContainer()->getCliHelper()->getQuestionHelper()->promptDistributionChoice($array);
 
         $site = $this->getContainer()->getSiteManager()->addSite(new Site(null, null, null, 'web'));
-        $site = $this->getContainer()->getSiteManager()->setDbInParametersYml($site);
+        $this->getContainer()->getSiteManager()->setDbInParametersYml($site);
 
         $directory = $site->getDirectory();
 

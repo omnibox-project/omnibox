@@ -6,10 +6,12 @@ use Omnibox\DependencyInjection\Container;
 
 class BaseCommand extends Command
 {
+    const ALL_COMMANDS_NEEDS_ROOT_ACCESS = 1;
+
     private $commandForTerminateEvent = null;
 
     /**
-     * @var bool
+     * @var array
      */
     private $requiresRootAccess;
 
@@ -27,17 +29,22 @@ class BaseCommand extends Command
     {
         $this->subcommands = array();
         $this->requiresSudo = false;
+        $this->requiresRootAccess = null;
         parent::__construct();
     }
 
-    public function requiresRootAccess() {
-        $this->setRequiresRootAccess(true);
+    public function requiresRootAccess($commandsThatRequiresRootAccess = null) {
+        if ($commandsThatRequiresRootAccess === null) {
+            $this->setRequiresRootAccess($this::ALL_COMMANDS_NEEDS_ROOT_ACCESS);
+        } else {
+            $this->setRequiresRootAccess($commandsThatRequiresRootAccess);
+        }
 
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return array
      */
     public function getRequiresRootAccess()
     {
@@ -45,11 +52,11 @@ class BaseCommand extends Command
     }
 
     /**
-     * @param boolean $requiresRootAccess
+     * @param $commandsThatRequiresRootAccess
      */
-    public function setRequiresRootAccess($requiresRootAccess)
+    public function setRequiresRootAccess($commandsThatRequiresRootAccess)
     {
-        $this->requiresRootAccess = $requiresRootAccess;
+        $this->requiresRootAccess = $commandsThatRequiresRootAccess;
     }
 
     /**
