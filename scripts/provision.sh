@@ -3,6 +3,20 @@
 # Install less
 npm install -g less@~1.7
 
+# Install Java
+echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+sudo apt-get install -y python-software-properties
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install -y oracle-java7-installer
+
+# Install Elasticsearch
+wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
+sudo add-apt-repository "deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main"
+sudo apt-get update && sudo apt-get install elasticsearch
+sudo update-rc.d elasticsearch defaults 95 10
+
 # Configure MySQL Access
 mysql --user="root" --password="secret" -e "UPDATE mysql.user SET Password='' WHERE User='root';" 2>/dev/null
 mysql --user="root" --password="secret" -e "FLUSH PRIVILEGES;" 2>/dev/null
