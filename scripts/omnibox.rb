@@ -56,6 +56,12 @@ class Omnibox
       end
     end
 
+    # Restart nginx and php5-fpm
+    config.vm.provision "shell" do |s|
+      s.inline = "service nginx restart && service php5-fpm restart"
+      s.args = []
+    end
+
     # Configure All Of The Server Environment Variables
     if settings.has_key?("variables")
       settings["variables"].each do |var|

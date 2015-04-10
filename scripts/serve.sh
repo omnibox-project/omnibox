@@ -48,7 +48,3 @@ chmod a+x "/vagrant/ssh/$name"
 if [ -f "./serve_$webconfig.sh" ]; then
     ./serve_$webconfig.sh $@
 fi
-
-# Restart nginx and php5-fpm
-service nginx restart
-service php5-fpm restart
