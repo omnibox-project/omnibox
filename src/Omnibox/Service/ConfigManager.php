@@ -73,7 +73,7 @@ class ConfigManager
 
     public function getSiteAttributeList($attribute)
     {
-        return array_map(function ($x) use ($attribute) { return $x[$attribute]; }, $this->getConfig()->getSitesArray());
+        return array_map(function ($x) use ($attribute) { return @$x[$attribute]; }, $this->getConfig()->getSitesArray());
     }
 
     public function configIsValid()
@@ -151,7 +151,8 @@ class ConfigManager
         return implode(" ",
             array_merge(
                 array($this->getConfig()->getIp()),
-                $this->getSiteAttributeList('domain')
+                $this->getSiteAttributeList('domain'),
+                $this->getSiteAttributeList('alias')
             )
         );
     }

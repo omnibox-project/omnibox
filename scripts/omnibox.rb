@@ -24,11 +24,6 @@ class Omnibox
       v.cpus = settings["cpus"]
     end
 
-    # Configure Port Forwarding To The Box
-    config.vm.network "forwarded_port", guest: 80, host: 8000
-    config.vm.network "forwarded_port", guest: 3306, host: 33060
-    config.vm.network "forwarded_port", guest: 5432, host: 54320
-
     # Configure The Public Key For SSH Access
     config.vm.provision "shell" do |s|
       s.inline = "echo $1 | tee -a /home/vagrant/.ssh/authorized_keys"
@@ -55,8 +50,8 @@ class Omnibox
       settings["sites"].each do |site|
         config.vm.synced_folder site["directory"], "/home/vagrant/" + site["name"], type: site["type"] ||= settings["defaultfoldertype"] ||= nil
         config.vm.provision "shell" do |s|
-          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3"
-          s.args = [site["domain"], site["webroot"], site["name"]]
+          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3 $4 $5"
+          s.args = [site["domain"], site["webroot"], site["name"], site["type"] ||= "", site["alias"] ||= ""]
         end
       end
     end
