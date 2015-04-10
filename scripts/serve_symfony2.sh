@@ -12,12 +12,6 @@ block="server {
     server_name $domain $alias;
     root $webroot;
 
-    # serve static files directly
-    location ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt)$ {
-        access_log        off;
-        expires           max;
-    }
-
     location / {
         # try to serve file directly, fallback to app.php
         try_files \$uri /app.php\$is_args\$args /index.php\$is_args\$args;
