@@ -8,12 +8,13 @@ class Site
     var $directory;
     var $webroot;
 
-    function __construct($name = null, $domain = null, $directory = null, $webroot = null)
+    function __construct($name = null, $domain = null, $directory = null, $webroot = null, $webconfig = 'default')
     {
         $this->directory = $directory;
         $this->domain = $domain;
         $this->name = $name;
         $this->webroot = $webroot;
+        $this->webconfig = $webconfig;
     }
 
     /**
@@ -78,6 +79,22 @@ class Site
     public function setWebroot($webroot)
     {
         $this->webroot = $webroot;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebconfig()
+    {
+        return $this->webconfig;
+    }
+
+    /**
+     * @param string $webconfig
+     */
+    public function setWebconfig($webconfig)
+    {
+        $this->webconfig = $webconfig;
     }
 
     public function toArray($id = null)

@@ -27,31 +27,36 @@ class ProcessHelper
         $isVerbose = (OutputInterface::VERBOSITY_VERBOSE == $output->getVerbosity());
 
         if ($isVerbose) {
-            $process->run(function ($type, $buffer) use (&$progress, &$error, &$bufferArr, &$output) {
+            $process->run(
+                function ($type, $buffer) use (&$progress, &$error, &$bufferArr, &$output) {
                     if (Process::ERR === $type) {
-                        $output->write('<error>'.$buffer.'</error>');
+                        $output->write('<error>' . $buffer . '</error>');
                     } else {
-                        $output->write('<info>'.$buffer.'</info>');
+                        $output->write('<info>' . $buffer . '</info>');
                     }
-                });
+                }
+            );
         } else {
             $progress = $this->cliHelper->getHelperSet()->get('progress');
+            $progress->setFormat('[%bar%]');
             $progress->setBarWidth(15);
             $progress->start($output);
 
             $hasError = false;
             $bufferArr = array();
 
-            $process->run(function ($type, $buffer) use (&$progress, &$hasError, &$bufferArr, &$output) {
+            $process->run(
+                function ($type, $buffer) use (&$progress, &$hasError, &$bufferArr, &$output) {
                     if (Process::ERR === $type) {
                         $hasError = true;
-                        $bufferArr[] = '<error>'.$buffer.'</error>';
+                        $bufferArr[] = '<error>' . $buffer . '</error>';
                     } else {
-                        $bufferArr[] = '<info>'.$buffer.'</info>';
+                        $bufferArr[] = '<info>' . $buffer . '</info>';
                     }
 
                     $progress->advance();
-                });
+                }
+            );
             $progress->finish();
 
             if ($hasError) {

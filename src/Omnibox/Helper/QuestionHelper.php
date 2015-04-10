@@ -88,12 +88,34 @@ class QuestionHelper
         $input = $this->cliHelper->getInputInterface();
         $output = $this->cliHelper->getOutputInterface();
 
-        $question = new Question('Web root (relative to the site directory): [web] ', 'web');
+        $question = new Question('Web root (relative to the site directory): [.] ', '.');
         $question->setValidator(
             function ($answer) use ($site) {
                 if (!file_exists($site->getDirectory(). DIRECTORY_SEPARATOR . $answer)) {
                     throw new \RuntimeException(
                         'The folder does not exist. Try again.'
+                    );
+                }
+
+                return $answer;
+            }
+        );
+
+        return $questionHelper->ask($input, $output, $question);
+    }
+
+    public function promptSiteWebconfig(Site $site)
+    {
+        $questionHelper = $this->cliHelper->getHelperSet()->get('question');
+        $input = $this->cliHelper->getInputInterface();
+        $output = $this->cliHelper->getOutputInterface();
+
+        $question = new Question('Nginx configuration (options: default, symfony2, magento): ['.$site->getWebconfig().'] ', $site->getWebconfig());
+        $question->setValidator(
+            function ($answer) use ($site) {
+                if (!in_array($answer, array('default', 'symfony2', 'magento'))) {
+                    throw new \RuntimeException(
+                        'The configuration does not exist.'
                     );
                 }
 
