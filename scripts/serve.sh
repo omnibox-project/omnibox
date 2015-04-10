@@ -2,7 +2,7 @@
 domain="$1"
 webroot="$2"
 name="$3"
-type="$4"
+webconfig="$4"
 alias="$5"
 root="/home/vagrant/$name"
 webroot="$root/$webroot"
@@ -31,22 +31,22 @@ block="server {
 "
 
 # Create default nginx site configuration
-echo "$block" > "/etc/nginx/sites-available/$1"
-ln -fs "/etc/nginx/sites-available/$1" "/etc/nginx/sites-enabled/$1"
+echo "$block" > "/etc/nginx/sites-available/$domain"
+ln -fs "/etc/nginx/sites-available/$domain" "/etc/nginx/sites-enabled/$domain"
 
 # Create MySQL DB
 mysql --user="root" --password="" -e "CREATE DATABASE IF NOT EXISTS $name;"
 
 # Create shortcut in ssh/ for executing ssh commands for this site
 template="#!/bin/sh
-php omnibox site ssh $3 -- \"\$*\"
+php omnibox site ssh $name -- \"\$*\"
 "
-echo "$template" > "/vagrant/ssh/$3"
-chmod a+x "/vagrant/ssh/$3"
+echo "$template" > "/vagrant/ssh/$name"
+chmod a+x "/vagrant/ssh/$name"
 
 # Run specialized serve script for site type
-if [ -f "./serve_$4.sh" ]; then
-    ./serve_$4.sh $@
+if [ -f "./serve_$webconfig.sh" ]; then
+    ./serve_$webconfig.sh $@
 fi
 
 # Restart nginx and php5-fpm

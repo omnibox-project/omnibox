@@ -2,7 +2,7 @@
 domain="$1"
 webroot="$2"
 name="$3"
-type="$4"
+webconfig="$4"
 alias="$5"
 root="/home/vagrant/$name"
 webroot="$root/$webroot"
@@ -59,11 +59,11 @@ xdebug.remote_connect_back=0\";
 "
 
 # Create nginx site configuration
-echo "$block" > "/etc/nginx/sites-available/$1"
+echo "$block" > "/etc/nginx/sites-available/$domain"
 
 # Create shortcut in app/ for calling app/console for this site
 template="#!/bin/sh
-php omnibox site console $3 -- \"\$*\"
+php omnibox site console $name -- \"\$*\"
 "
-echo "$template" > "/vagrant/app/$3"
-chmod a+x "/vagrant/app/$3"
+echo "$template" > "/vagrant/app/$name"
+chmod a+x "/vagrant/app/$name"
