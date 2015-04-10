@@ -4,18 +4,23 @@
 npm install -g less@~1.7
 
 # Install Java
-echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
-sudo apt-get install -y python-software-properties
-sudo add-apt-repository ppa:webupd8team/java
-sudo apt-get update
-sudo apt-get install -y oracle-java7-installer
+if [ "$(dpkg -s oracle-java7-installer 2>/dev/null|wc -l)" -eq "0" ]; then
+    echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+    echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
+    sudo apt-get install -y python-software-properties
+    sudo add-apt-repository ppa:webupd8team/java
+    sudo apt-get update
+    sudo apt-get install -y oracle-java7-installer
+fi
 
 # Install Elasticsearch
-wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
-sudo add-apt-repository "deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main"
-sudo apt-get update && sudo apt-get install elasticsearch
-sudo update-rc.d elasticsearch defaults 95 10
+if [ "$(dpkg -s elasticsearch 2>/dev/null|wc -l)" -eq "0" ]; then
+    wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
+    sudo add-apt-repository "deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main"
+    sudo apt-get update
+    sudo apt-get install -y elasticsearch
+    sudo update-rc.d elasticsearch defaults 95 10
+fi
 
 # Configure MySQL Access
 mysql --user="root" --password="secret" -e "UPDATE mysql.user SET Password='' WHERE User='root';" 2>/dev/null
@@ -36,7 +41,7 @@ rm -R -f /etc/nginx/sites-available/*
 rm -R -f /etc/nginx/sites-enabled/*
 
 # Remove empty directories left over from removed projects
-find /home/vagrant/. -depth -type d -empty -exec rmdir "{}" \;
+find /home/vagrant/. -maxdepth 1 -type d -empty -exec rmdir "{}" \;
 
 # Make SSH faster
 if [ -z "$(grep "Disable DNS lookups" /etc/ssh/sshd_config)" ]; then
