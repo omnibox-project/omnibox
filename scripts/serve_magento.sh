@@ -20,7 +20,7 @@ block="server {
 
     location / {
         index index.html index.php; ## Allow a static html file to be shown first
-        try_files $uri $uri/ @handler; ## If missing pass the URI to Magento's front handler
+        try_files \$uri \$uri/ @handler; ## If missing pass the URI to Magento's front handler
         expires 30d; ## Assume all files are cachable
     }
 
@@ -50,11 +50,11 @@ block="server {
     }
 
     location ~ .php$ { ## Execute PHP scripts
-        if (!-e $request_filename) { rewrite / /index.php last; } ## Catch 404s that try_files miss
+        if (!-e \$request_filename) { rewrite / /index.php last; } ## Catch 404s that try_files miss
 
         expires        off; ## Do not cache dynamic content
         fastcgi_pass unix:/var/run/php5-fpm.sock;
-        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        fastcgi_param  SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         fastcgi_param  MAGE_RUN_CODE default; ## Store code is defined in administration > Configuration > Manage Stores
         fastcgi_param  MAGE_RUN_TYPE store;
         include        fastcgi_params; ## See /etc/nginx/fastcgi_params

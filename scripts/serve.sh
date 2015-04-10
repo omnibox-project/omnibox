@@ -45,6 +45,6 @@ echo "$template" > "/vagrant/ssh/$name"
 chmod a+x "/vagrant/ssh/$name"
 
 # Run specialized serve script for site type
-if [ -f "./serve_$webconfig.sh" ]; then
-    ./serve_$webconfig.sh $@
+if [ -f "/vagrant/scripts/serve_$webconfig.sh" ]; then
+    bash /vagrant/scripts/serve_$webconfig.sh $@
 fi

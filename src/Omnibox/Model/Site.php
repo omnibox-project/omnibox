@@ -8,12 +8,13 @@ class Site
     var $directory;
     var $webroot;
 
-    function __construct($name = null, $domain = null, $directory = null, $webroot = null, $webconfig = 'default')
+    function __construct($name = null, $domain = null, $directory = null, $webroot = null, $alias = null, $webconfig = 'default')
     {
         $this->directory = $directory;
         $this->domain = $domain;
         $this->name = $name;
         $this->webroot = $webroot;
+        $this->alias = $alias;
         $this->webconfig = $webconfig;
     }
 
@@ -84,6 +85,22 @@ class Site
     /**
      * @return string
      */
+    public function getAlias()
+    {
+        return $this->alias;
+    }
+
+    /**
+     * @param string $alias
+     */
+    public function setAlias($alias)
+    {
+        $this->alias = $alias;
+    }
+
+    /**
+     * @return string
+     */
     public function getWebconfig()
     {
         return $this->webconfig;
@@ -104,7 +121,9 @@ class Site
                 'name' => $this->getName(),
                 'domain' => $this->getDomain(),
                 'directory' => $this->getDirectory(),
-                'webroot' => $this->getWebroot()
+                'webroot' => $this->getWebroot(),
+                'alias' => $this->getAlias(),
+                'webconfig' => $this->getWebconfig(),
             );
         } else {
             return array(
@@ -112,7 +131,9 @@ class Site
                 'name' => $this->getName(),
                 'domain' => $this->getDomain(),
                 'directory' => $this->getDirectory(),
-                'webroot' => $this->getWebroot()
+                'webroot' => $this->getWebroot(),
+                'alias' => $this->getAlias(),
+                'webconfig' => $this->getWebconfig(),
             );
         }
     }

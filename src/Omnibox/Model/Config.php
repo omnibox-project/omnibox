@@ -17,7 +17,14 @@ class Config
     {
         if (isset($array['sites'])) {
             foreach ($array['sites'] as $s) {
-                $site = new Site($s['name'], $s['domain'], $s['directory'], $s['webroot']);
+                $site = new Site(
+                    $s['name'],
+                    $s['domain'],
+                    $s['directory'],
+                    $s['webroot'],
+                    (isset($s['alias']) ? $s['alias'] : null),
+                    (isset($s['webconfig']) ? $s['webconfig'] : 'default')
+                );
                 $this->addSite($site);
             }
         }
