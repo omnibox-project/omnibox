@@ -53,11 +53,13 @@ block="server {
         if (!-e \$request_filename) { rewrite / /index.php last; } ## Catch 404s that try_files miss
 
         expires        off; ## Do not cache dynamic content
-        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_pass   unix:/var/run/php5-fpm.sock;
+        include        fastcgi_params; ## See /etc/nginx/fastcgi_params
+        fastcgi_param  SCRIPT_NAME \$fastcgi_script_name;
+        fastcgi_param  PATH_INFO \$fastcgi_path_info;
         fastcgi_param  SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         fastcgi_param  MAGE_RUN_CODE default; ## Store code is defined in administration > Configuration > Manage Stores
         fastcgi_param  MAGE_RUN_TYPE store;
-        include        fastcgi_params; ## See /etc/nginx/fastcgi_params
     }
 
     error_log /vagrant/logs/${domain}_error.log;
