@@ -23,6 +23,10 @@ block="server {
         expires           max;
     }
 
+    location / {
+        index index.html index.php; ## Allow a static html file to be shown first
+    }
+
     location ~ \.php$ {
         try_files \$uri =404;
         fastcgi_pass unix:/var/run/php5-fpm.sock;
