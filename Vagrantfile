@@ -1,4 +1,5 @@
 VAGRANTFILE_API_VERSION = "2"
+ENV['VAGRANT_DEFAULT_PROVIDER'] = "parallels"
 
 path = "#{File.dirname(__FILE__)}"
 
