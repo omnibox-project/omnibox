@@ -22,6 +22,7 @@ class SiteCommand extends BaseCommand
                     'add' => 'Add a site',
                     'remove' => 'Remove a site',
                     'list' => 'List all sites',
+                    'share' => 'Share site on VagrantCloud',
                     'generate' => 'Generate a new Symfony2 site',
                     'ssh' => 'Run ssh commands on a specific site',
                     'console' => 'Run app/console commands in a specific project'
@@ -56,6 +57,14 @@ class SiteCommand extends BaseCommand
         $input = $this->getContainer()->getCliHelper()->getInputInterface();
         $this->getContainer()->getSiteManager()->listSites($input, $output, $this->getHelper('table'), true);
         $this->getContainer()->getSiteManager()->deleteSite($input, $output, $this->getHelper('question'));
+    }
+
+    public function _share()
+    {
+        $output = $this->getContainer()->getCliHelper()->getOutputInterface();
+        $input = $this->getContainer()->getCliHelper()->getInputInterface();
+        $this->getContainer()->getSiteManager()->listSites($input, $output, $this->getHelper('table'), true);
+        $this->getContainer()->getSiteManager()->shareSite($input, $output, $this->getHelper('question'));
     }
 
     public function _list()

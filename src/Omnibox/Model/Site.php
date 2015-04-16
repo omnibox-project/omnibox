@@ -7,8 +7,9 @@ class Site
     var $domain;
     var $directory;
     var $webroot;
+    var $share;
 
-    function __construct($name = null, $domain = null, $directory = null, $webroot = null, $alias = null, $webconfig = 'default')
+    function __construct($name = null, $domain = null, $directory = null, $webroot = null, $alias = null, $webconfig = 'default', $share = false)
     {
         $this->directory = $directory;
         $this->domain = $domain;
@@ -16,6 +17,23 @@ class Site
         $this->webroot = $webroot;
         $this->alias = $alias;
         $this->webconfig = $webconfig;
+        $this->share = $share;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShare()
+    {
+        return $this->share;
+    }
+
+    /**
+     * @param boolean $share
+     */
+    public function setShare($share)
+    {
+        $this->share = $share;
     }
 
     /**
@@ -124,6 +142,7 @@ class Site
                 'webroot' => $this->getWebroot(),
                 'alias' => $this->getAlias(),
                 'webconfig' => $this->getWebconfig(),
+                'share' => $this->getShare(),
             );
         } else {
             return array(
@@ -134,6 +153,7 @@ class Site
                 'webroot' => $this->getWebroot(),
                 'alias' => $this->getAlias(),
                 'webconfig' => $this->getWebconfig(),
+                'share' => $this->getShare(),
             );
         }
     }

@@ -62,6 +62,32 @@ class SiteManager
         $this->vagrantManager->reload();
     }
 
+    public function shareSite(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
+    {
+        $sites = $this->configManager->getConfig()->getSitesArray(true);
+        $ids = array();
+        foreach ($sites as $id => $site) {
+            $ids[] = $id;
+        }
+
+        $question = new Question('Enter the ID of the site you would like to share: ');
+        $question->setValidator(
+            function ($answer) use ($ids) {
+                if (!in_array($answer, $ids)) {
+                    throw new \RuntimeException(
+                        'Not a valid ID number. Try again.'
+                    );
+                }
+
+                return $answer;
+            }
+        );
+
+        $id = $questionHelper->ask($input, $output, $question);
+        $this->configManager->shareSiteByName($sites[$id]['name']);
+        $this->vagrantManager->provision();
+    }
+
     public function listSites(InputInterface $input, OutputInterface $output, TableHelper $tableHelper, $showIds = false)
     {
         $siteList = $this->configManager->getConfig()->getSitesArray($showIds);

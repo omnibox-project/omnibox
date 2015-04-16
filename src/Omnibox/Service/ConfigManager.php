@@ -131,6 +131,19 @@ class ConfigManager
         }
     }
 
+    public function shareSiteByName($name)
+    {
+        $sites = $this->getConfig()->getSites();
+        foreach ($sites as $i => $site) {
+            $sites[$i]->setShare(false);
+            if ($site->getName() === $name) {
+                $sites[$i]->setShare(true);
+                $this->getConfig()->setSites($sites);
+                $this->dumpConfig();
+            }
+        }
+    }
+
     private function dumpYml($dataArray, $filepath)
     {
         $dumper = new Dumper();
