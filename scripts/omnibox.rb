@@ -22,6 +22,7 @@ class Omnibox
     config.vm.provider "parallels" do |v|
       v.memory = settings["memory"]
       v.cpus = settings["cpus"]
+      v.name = "omnibox"
     end
 
     # Configure The Public Key For SSH Access
