@@ -135,9 +135,9 @@ class ConfigManager
     {
         $sites = $this->getConfig()->getSites();
         foreach ($sites as $i => $site) {
-            $sites[$i]->setShare(false);
+            $sites[$i]->setShare(0);
             if ($site->getName() === $name) {
-                $sites[$i]->setShare(true);
+                $sites[$i]->setShare(1);
                 $this->getConfig()->setSites($sites);
                 $this->dumpConfig();
             }

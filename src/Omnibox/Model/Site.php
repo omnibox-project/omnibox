@@ -9,7 +9,7 @@ class Site
     var $webroot;
     var $share;
 
-    function __construct($name = null, $domain = null, $directory = null, $webroot = null, $alias = null, $webconfig = 'default', $share = false)
+    function __construct($name = null, $domain = null, $directory = null, $webroot = null, $alias = null, $webconfig = 'default', $share = 0)
     {
         $this->directory = $directory;
         $this->domain = $domain;
@@ -21,7 +21,7 @@ class Site
     }
 
     /**
-     * @return bool
+     * @return int
      */
     public function getShare()
     {
@@ -29,7 +29,7 @@ class Site
     }
 
     /**
-     * @param boolean $share
+     * @param int $share
      */
     public function setShare($share)
     {
