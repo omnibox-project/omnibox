@@ -23,7 +23,8 @@ class Config
                     $s['directory'],
                     $s['webroot'],
                     (isset($s['alias']) ? $s['alias'] : null),
-                    (isset($s['webconfig']) ? $s['webconfig'] : 'default')
+                    (isset($s['webconfig']) ? $s['webconfig'] : 'default'),
+                    (isset($s['share']) ? $s['share'] : 0)
                 );
                 $this->addSite($site);
             }
