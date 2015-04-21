@@ -6,7 +6,7 @@ webconfig="$4"
 share="$5"
 alias="$6"
 if [ "$share" == "1" ]; then
-    alias="$alias $share *.vagrantcloud.com"
+    alias="$alias *.vagrantcloud.com"
 fi
 
 root="/home/vagrant/$name"

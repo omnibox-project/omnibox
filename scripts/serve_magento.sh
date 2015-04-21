@@ -3,11 +3,10 @@ domain="$1"
 webroot="$2"
 name="$3"
 webconfig="$4"
-share="$6"
-if ["$share" == "0"]; then
-    alias="$5"
-else
-    alias="$5 *.vagrantcloud.com"
+share="$5"
+alias="$6"
+if [ "$share" == "1" ]; then
+    alias="$alias *.vagrantcloud.com"
 fi
 
 root="/home/vagrant/$name"
