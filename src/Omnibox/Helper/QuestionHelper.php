@@ -110,10 +110,10 @@ class QuestionHelper
         $input = $this->cliHelper->getInputInterface();
         $output = $this->cliHelper->getOutputInterface();
 
-        $question = new Question('Nginx configuration (options: default, symfony2, magento): ['.$site->getWebconfig().'] ', $site->getWebconfig());
+        $question = new Question('Nginx configuration (options: default, symfony2, magento, wordpress): ['.$site->getWebconfig().'] ', $site->getWebconfig());
         $question->setValidator(
             function ($answer) use ($site) {
-                if (!in_array($answer, array('default', 'symfony2', 'magento'))) {
+                if (!in_array($answer, array('default', 'symfony2', 'magento', 'wordpress'))) {
                     throw new \RuntimeException(
                         'The configuration does not exist.'
                     );
