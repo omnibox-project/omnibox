@@ -2,6 +2,11 @@
 ip="$1"
 apacheip="$2"
 
+# Install graphviz
+if [ "$(dpkg -s graphviz 2>/dev/null|wc -l)" -eq "0" ]; then
+    sudo apt-get install -y graphviz
+fi
+
 # Install apache
 if [ "$(dpkg -s apache2 2>/dev/null|wc -l)" -eq "0" ]; then
     sudo apt-get install -y apache2
@@ -19,7 +24,20 @@ fi
 
 # Configure php-fpm
 if [ -z "$(grep "listen = 9000" /etc/php5/fpm/pool.d/www.conf)" ]; then
-    echo "listen = 9000" >> /etc/php5/fpm/pool.d/www.conf
+    sudo echo "listen = 9000" >> /etc/php5/fpm/pool.d/www.conf
+    sudo echo "; priority=99
+realpath_cache_size=32M
+apc.shm_size=512M
+output_buffering=0
+realpath_cache_ttl=86400
+upload_max_filesize=200M
+post_max_size=200M
+opcache.revalidate_freq=0
+xdebug.coverage_enable=0
+xdebug.max_nesting_level=1000
+xdebug.remote_host=192.168.10.1
+xdebug.remote_connect_back=0" > /etc/php5/mods-available/omnibox.ini
+    sudo php5enmod omnibox
     sudo service php5-fpm restart
 fi
 
