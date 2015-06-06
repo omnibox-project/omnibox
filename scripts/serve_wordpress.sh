@@ -55,7 +55,7 @@ if [ "$server" == "nginx" ]; then
             include fastcgi.conf;
             fastcgi_index index.php;
         #	fastcgi_intercept_errors on;
-            fastcgi_pass unix:/var/run/php5-fpm.sock;
+            fastcgi_pass 127.0.0.1:9000;
         }
 
         error_log /vagrant/logs/${domain}_error.log;

@@ -33,7 +33,7 @@ if [ "$server" == "nginx" ]; then
 
         location ~ \.php$ {
             try_files \$uri =404;
-            fastcgi_pass unix:/var/run/php5-fpm.sock;
+            fastcgi_pass 127.0.0.1:9000;
             fastcgi_index index.php;
             include fastcgi_params;
             fastcgi_param SCRIPT_NAME \$fastcgi_script_name;
