@@ -33,6 +33,7 @@ realpath_cache_ttl=86400
 upload_max_filesize=200M
 post_max_size=200M
 opcache.revalidate_freq=0
+error_reporting=E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
 xdebug.coverage_enable=0
 xdebug.max_nesting_level=1000
 xdebug.remote_host=192.168.10.1
