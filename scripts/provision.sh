@@ -1,4 +1,27 @@
 #!/usr/bin/env bash
+ip="$1"
+apacheip="$2"
+
+# Install apache
+if [ "$(dpkg -s apache2 2>/dev/null|wc -l)" -eq "0" ]; then
+    sudo apt-get install -y apache2
+fi
+
+# Configure apache
+if [ -z "$(grep "Listen $apacheip" /etc/apache2/ports.conf)" ]; then
+    sudo sed -i "s/^Listen.*\$/Listen $apacheip:80/g" /etc/apache2/ports.conf
+    sudo a2enmod rewrite
+    sudo a2enmod vhost_alias
+    sudo a2enmod expires
+    sudo a2enmod proxy_fcgi
+    sudo service apache2 restart
+fi
+
+# Configure php-fpm
+if [ -z "$(grep "listen = 9000" /etc/php5/fpm/pool.d/www.conf)" ]; then
+    echo "listen = 9000" >> /etc/php5/fpm/pool.d/www.conf
+    sudo service php5-fpm restart
+fi
 
 # Install less
 npm install -g less@~1.7
@@ -39,6 +62,10 @@ rm -f /vagrant/ssh/*
 # Remove old nginx configurations
 rm -R -f /etc/nginx/sites-available/*
 rm -R -f /etc/nginx/sites-enabled/*
+
+# Remove old apache configurations
+rm -R -f /etc/apache2/sites-available/*
+rm -R -f /etc/apache2/sites-enabled/*
 
 # Remove empty directories left over from removed projects
 find /home/vagrant/. -maxdepth 1 -type d -empty -exec rmdir "{}" \;

@@ -138,13 +138,14 @@ class VagrantManager
     private function updateHostsFile()
     {
         // Create the sites row that will be inserted in the hosts file
-        $comment = "# Omnibox Sites";
+        $comment = '# Omnibox Sites';
 
         // Remove old Omnibox configs and add the current config
         $fileContent = file_get_contents($this->getParameter('path_to_hosts_file'));
         $fileContent = preg_replace('/\n?.*' . preg_quote($comment) . '.*$/m', '', $fileContent);
         $fileContent = trim($fileContent, "\n");
-        $fileContent .= sprintf("\n%s %s\n", $this->configManager->createRowForHostsFile(), $comment);
+        $fileContent .= sprintf("\n%s %s\n", $this->configManager->createRowsForHostsFile('nginx'), $comment);
+        $fileContent .= sprintf("%s %s\n", $this->configManager->createRowsForHostsFile('apache'), $comment);
         file_put_contents($this->getParameter('path_to_hosts_file'), $fileContent);
 
         // Flush dns cache
@@ -163,7 +164,7 @@ class VagrantManager
                 }
             }
         }
-        file_put_contents($this->getParameter('path_to_exports_file'), implode("", $fileContents));
+        file_put_contents($this->getParameter('path_to_exports_file'), implode('', $fileContents));
     }
 
     private function wrapCommandIfSudo($command)

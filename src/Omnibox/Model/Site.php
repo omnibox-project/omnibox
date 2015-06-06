@@ -3,13 +3,14 @@ namespace Omnibox\Model;
 
 class Site
 {
-    var $name;
-    var $domain;
-    var $directory;
-    var $webroot;
-    var $share;
+    public $name;
+    public $domain;
+    public $directory;
+    public $webroot;
+    public $share;
+    public $server;
 
-    function __construct($name = null, $domain = null, $directory = null, $webroot = null, $alias = null, $webconfig = 'default', $share = 0)
+    public function __construct($name = null, $domain = null, $directory = null, $webroot = null, $alias = null, $webconfig = 'default', $share = 0, $server = 'nginx')
     {
         $this->directory = $directory;
         $this->domain = $domain;
@@ -18,6 +19,7 @@ class Site
         $this->alias = $alias;
         $this->webconfig = $webconfig;
         $this->share = $share;
+        $this->server = $server;
     }
 
     /**
@@ -132,10 +134,26 @@ class Site
         $this->webconfig = $webconfig;
     }
 
+    /**
+     * @return string
+     */
+    public function getServer()
+    {
+        return $this->server;
+    }
+
+    /**
+     * @param string $server
+     */
+    public function setServer($server)
+    {
+        $this->server = $server;
+    }
+
     public function toArray($id = null)
     {
         if ($id === null) {
-            return array(
+            return [
                 'name' => $this->getName(),
                 'domain' => $this->getDomain(),
                 'directory' => $this->getDirectory(),
@@ -143,9 +161,10 @@ class Site
                 'alias' => $this->getAlias(),
                 'webconfig' => $this->getWebconfig(),
                 'share' => $this->getShare(),
-            );
+                'server' => $this->getServer(),
+            ];
         } else {
-            return array(
+            return [
                 'id' => $id,
                 'name' => $this->getName(),
                 'domain' => $this->getDomain(),
@@ -154,7 +173,8 @@ class Site
                 'alias' => $this->getAlias(),
                 'webconfig' => $this->getWebconfig(),
                 'share' => $this->getShare(),
-            );
+                'server' => $this->getServer(),
+            ];
         }
     }
 }

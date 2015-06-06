@@ -6,6 +6,7 @@ class Omnibox
 
     # Configure A Private Network IP
     config.vm.network :private_network, ip: settings["ip"] ||= "192.168.10.10"
+    config.vm.network :private_network, ip: settings["apache_ip"] ||= "192.168.10.11"
 
     # Configure A Few VirtualBox Settings
     config.vm.provider "virtualbox" do |vb|
@@ -44,22 +45,25 @@ class Omnibox
     config.vm.provision "shell", inline: "cp /vagrant/aliases /home/vagrant/.bash_aliases"
 
     # Install extra stuff
-    config.vm.provision "shell", inline: "sh /vagrant/scripts/provision.sh"
+    config.vm.provision "shell" do |s|
+        s.inline = "sh /vagrant/scripts/provision.sh $1 $2"
+        s.args = [settings["ip"] ||= "192.168.10.10", settings["apache_ip"] ||= "192.168.10.11"]
+    end
 
     # Install All The Configured Nginx Sites
     unless settings["sites"].nil?
       settings["sites"].each do |site|
         config.vm.synced_folder site["directory"], "/home/vagrant/" + site["name"], type: site["type"] ||= settings["defaultfoldertype"] ||= nil
         config.vm.provision "shell" do |s|
-          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3 $4 $5 $6"
-          s.args = [site["domain"], site["webroot"], site["name"], site["webconfig"] ||= "", site["share"] ||= "", site["alias"] ||= ""]
+          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3 $4 $5 $6 $7 $8"
+          s.args = [site["server"] ||= "nginx", site["domain"], site["webroot"], site["name"], site["webconfig"] ||= "", site["share"] ||= "", settings["ip"] ||= "192.168.10.10", site["alias"] ||= ""]
         end
       end
     end
 
     # Restart nginx and php5-fpm
     config.vm.provision "shell" do |s|
-      s.inline = "service nginx restart && service php5-fpm restart"
+      s.inline = "service nginx restart && service apache2 restart && service php5-fpm restart"
       s.args = []
     end
 
@@ -72,5 +76,8 @@ class Omnibox
         end
       end
     end
+
+    # Restart nginx after mount
+    config.vm.provision :shell, :inline => "sudo service nginx start && sudo service apache2 restart", run: "always"
   end
 end

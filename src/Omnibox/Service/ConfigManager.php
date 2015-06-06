@@ -71,9 +71,25 @@ class ConfigManager
         $this->getConfig()->addSite($site);
     }
 
-    public function getSiteAttributeList($attribute)
+    public function getSiteAttributeList($attribute, $serverFilter = null)
     {
-        return array_map(function ($x) use ($attribute) { return @$x[$attribute]; }, $this->getConfig()->getSitesArray());
+        $sites = $this->getConfig()->getSitesArray();
+
+        if ($serverFilter) {
+            $sites = array_filter(
+                $sites,
+                function ($x) use ($serverFilter) {
+                    return ($x['server'] === $serverFilter);
+                }
+            );
+        }
+
+        return array_map(
+            function ($x) use ($attribute) {
+                return @$x[$attribute];
+            },
+            $sites
+        );
     }
 
     public function configIsValid()
@@ -159,13 +175,14 @@ class ConfigManager
         $this->dumpYml($this->getConfig()->toArray(), $this->getParameter('path_to_config_file'));
     }
 
-    public function createRowForHostsFile()
+    public function createRowsForHostsFile($server = null)
     {
-        return implode(" ",
+        return implode(
+            ' ',
             array_merge(
-                array($this->getConfig()->getIp()),
-                $this->getSiteAttributeList('domain'),
-                $this->getSiteAttributeList('alias')
+                [($server === 'apache' ? $this->getConfig()->getApacheIp() : $this->getConfig()->getIp())],
+                $this->getSiteAttributeList('domain', $server),
+                $this->getSiteAttributeList('alias', $server)
             )
         );
     }

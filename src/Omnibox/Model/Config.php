@@ -6,12 +6,13 @@ use Omnibox\Model\Site;
 class Config
 {
     private $ip;
+    private $apacheIp;
     private $memory;
     private $cpus;
     private $authorize;
     private $defaultfoldertype;
-    private $keys = array();
-    private $sites = array();
+    private $keys = [];
+    private $sites = [];
 
     public function __construct($array = null)
     {
@@ -24,7 +25,8 @@ class Config
                     $s['webroot'],
                     (isset($s['alias']) ? $s['alias'] : null),
                     (isset($s['webconfig']) ? $s['webconfig'] : 'default'),
-                    (isset($s['share']) ? $s['share'] : 0)
+                    (isset($s['share']) ? $s['share'] : 0),
+                    (isset($s['server']) ? $s['server'] : 'nginx')
                 );
                 $this->addSite($site);
             }
@@ -38,6 +40,10 @@ class Config
 
         if (isset($array['ip'])) {
             $this->setIp($array['ip']);
+        }
+
+        if (isset($array['apache_ip'])) {
+            $this->setApacheIp($array['apache_ip']);
         }
 
         if (isset($array['memory'])) {
@@ -185,22 +191,39 @@ class Config
         $this->sites = $sites;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getApacheIp()
+    {
+        return $this->apacheIp;
+    }
+
+    /**
+     * @param mixed $apacheIp
+     */
+    public function setApacheIp($apacheIp)
+    {
+        $this->apacheIp = $apacheIp;
+    }
+
     public function toArray()
     {
-        return array(
+        return [
             'ip' => $this->getIp(),
+            'apache_ip' => $this->getApacheIp(),
             'memory' => $this->getMemory(),
             'cpus' => $this->getCpus(),
             'authorize' => $this->getAuthorize(),
             'keys' => $this->getKeys(),
             'defaultfoldertype' => $this->getDefaultfoldertype(),
             'sites' => $this->getSitesArray()
-        );
+        ];
     }
 
     public function getSitesArray($showIds = false)
     {
-        $sites = array();
+        $sites = [];
         foreach ($this->getSites() as $i => $site) {
             if ($showIds === true) {
                 $sites[] = $site->toArray($i);
