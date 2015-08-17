@@ -133,7 +133,7 @@ class SiteCommand extends BaseCommand
                         '-t',
                         'vagrant@'.$config->getIp(),
                         '--',
-                        'cd /home/vagrant/' . $site['name'] . ' && php app/console ' . $command . ' 2>&1'
+                        'export XDEBUG_CONFIG="idekey=phpstorm" && export PHP_IDE_CONFIG="serverName='.$site['domain'].'" && cd /home/vagrant/' . $site['name'] . ' && php -d xdebug.remote_host=192.168.10.1 -d xdebug.remote_enable=1 app/console ' . $command . ' 2>&1'
                     )
                 );
                 $proc = $process->getProcess();
