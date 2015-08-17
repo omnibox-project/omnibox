@@ -58,7 +58,7 @@ fi
 # Install Elasticsearch
 if [ "$(dpkg -s elasticsearch 2>/dev/null|wc -l)" -eq "0" ]; then
     wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
-    sudo add-apt-repository "deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main"
+    sudo add-apt-repository "deb http://packages.elasticsearch.org/elasticsearch/1.5/debian stable main"
     sudo apt-get update
     sudo apt-get install -y elasticsearch
     sudo update-rc.d elasticsearch defaults 95 10
