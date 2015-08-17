@@ -31,6 +31,7 @@ $container['parameters'] = function ($c) {
         'path_to_config_file' => 'omnibox.yaml',
         'default_config_values' => array(
             'ip' => '192.168.10.10',
+            'apache_ip' => '192.168.10.11',
             'memory' => '2048',
             'cpus' => '1',
             'defaultfoldertype' => 'nfs',
