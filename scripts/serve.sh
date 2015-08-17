@@ -57,13 +57,12 @@ elif [ "$server" == "apache" ]; then
         ServerAlias $domain.omnibox.com $alias
         ErrorLog \"/vagrant/logs/${domain}_error.log\"
         CustomLog \"/vagrant/logs/${domain}_access.log\" combined
+        <FilesMatch \.php\$>
+            SetHandler proxy:fcgi://127.0.0.1:9000
+        </FilesMatch>
         <Directory \"$webroot\">
+            Require all granted
             AllowOverride All
-            RewriteEngine On
-            RewriteBase /
-            RewriteOptions InheritBefore
-            RewriteCond %{REQUEST_FILENAME} -f
-            RewriteRule ^(.*\.php(/.*)?)\$ fcgi://127.0.0.1:9000$webroot/\$1 [L,P]
         </Directory>
     </VirtualHost>
     "
