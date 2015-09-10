@@ -12,6 +12,11 @@ if [ "$(dpkg -s apache2 2>/dev/null|wc -l)" -eq "0" ]; then
     sudo apt-get install -y apache2
 fi
 
+# Install ca-certificates
+if [ "$(dpkg -s ca-certificates 2>/dev/null|wc -l)" -eq "0" ]; then
+    sudo apt-get install -y ca-certificates
+fi
+
 # Configure apache
 if [ -z "$(grep "Listen $apacheip" /etc/apache2/ports.conf)" ]; then
     sudo sed -i "s/^Listen.*\$/Listen $apacheip:80/g" /etc/apache2/ports.conf
@@ -32,8 +37,13 @@ output_buffering=0
 realpath_cache_ttl=86400
 upload_max_filesize=200M
 post_max_size=200M
+opcache.enable=1
+opcache.max_accelerated_files=32000
+opcache.memory_consumption=512
 opcache.revalidate_freq=0
 error_reporting=E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+short_open_tag = On
+memory_limit = 256M
 xdebug.coverage_enable=0
 xdebug.max_nesting_level=1000
 xdebug.remote_host=192.168.10.1
