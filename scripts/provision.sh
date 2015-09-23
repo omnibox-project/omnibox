@@ -17,6 +17,17 @@ if [ "$(dpkg -s ca-certificates 2>/dev/null|wc -l)" -eq "0" ]; then
     sudo apt-get install -y ca-certificates
 fi
 
+# Configure swap
+if [ ! -f "/swapfile" ]; then
+    sudo fallocate -l 2G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    sudo echo "" >> /etc/fstab
+    sudo echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab
+fi
+
+
 # Configure apache
 if [ -z "$(grep "Listen $apacheip" /etc/apache2/ports.conf)" ]; then
     sudo sed -i "s/^Listen.*\$/Listen $apacheip:80/g" /etc/apache2/ports.conf
