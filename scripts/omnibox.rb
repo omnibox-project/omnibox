@@ -78,6 +78,6 @@ class Omnibox
     end
 
     # Restart nginx after mount
-    config.vm.provision :shell, :inline => "sudo service nginx start && sudo service apache2 restart", run: "always"
+    config.vm.provision :shell, :inline => "sudo service nginx restart && sudo service apache2 restart", run: "always"
   end
 end
