@@ -96,7 +96,7 @@ class SiteCommand extends BaseCommand
                         '-t',
                         'vagrant@'.$config->getIp(),
                         '--',
-                        'export XDEBUG_CONFIG="idekey=phpstorm" && export PHP_IDE_CONFIG="serverName='.$site['domain'].'" && cd /home/vagrant/' . $site['name'] . ' && ' . $command . ' 2>&1'
+                        'cd /home/vagrant/' . $site['name'] . ' && ' . $command . ' 2>&1'
                     )
                 );
                 $proc = $process->getProcess();
