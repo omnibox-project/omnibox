@@ -55,7 +55,7 @@ class Omnibox
       settings["sites"].each do |site|
         config.vm.synced_folder site["directory"], "/home/vagrant/" + site["name"], type: site["type"] ||= settings["defaultfoldertype"] ||= nil
         config.vm.provision "shell" do |s|
-          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3 $4 $5 $6 $7 $8"
+          s.path = 'scripts/serve.sh'
           s.args = [site["server"] ||= "nginx", site["domain"], site["webroot"], site["name"], site["webconfig"] ||= "", site["share"] ||= "", settings["ip"] ||= "192.168.10.10", site["alias"] ||= ""]
         end
       end
