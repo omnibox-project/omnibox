@@ -6,7 +6,7 @@ name="$4"
 webconfig="$5"
 share="$6"
 ip="$7"
-alias="$8"
+alias="$8 $9 $10 $11 $12 $13 $14 $15 $16"
 if [ "$share" == "1" ]; then
     alias="$alias *.vagrantcloud.com"
 fi
