@@ -2,6 +2,8 @@
 ip="$1"
 apacheip="$2"
 
+sudo apt-get update
+
 # Install graphviz
 if [ "$(dpkg -s graphviz 2>/dev/null|wc -l)" -eq "0" ]; then
     sudo apt-get install -y graphviz
