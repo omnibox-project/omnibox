@@ -111,8 +111,6 @@ class VagrantManager
     {
         $output = $this->cliHelper->getOutputInterface();
 
-        $this->removeInvalidFoldersFromExports();
-
         $output->writeln('<info>Running "vagrant reload"...</info>');
         $this->cliHelper->getProcessHelper()->runWithProgressBar($this->wrapCommandIfSudo('vagrant reload'));
     }
@@ -128,8 +126,6 @@ class VagrantManager
     private function runUp()
     {
         $output = $this->cliHelper->getOutputInterface();
-
-        $this->removeInvalidFoldersFromExports();
 
         $output->writeln('<info>Running "vagrant up"...</info>');
         $this->cliHelper->getProcessHelper()->runWithProgressBar($this->wrapCommandIfSudo('vagrant up'));
