@@ -1,6 +1,6 @@
 # Omnibox
 
-Homestead inspired Vagrant development environment for Symfony, Magento, WordPress and plain PHP projects.
+Homestead inspired Vagrant development environment for all kinds of PHP projects.
 
 ## Features
 - Configures /etc/hosts automatically (if used with `sudo` or given the correct permissions)
