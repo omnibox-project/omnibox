@@ -9,7 +9,6 @@ class UpCommand extends BaseCommand
     protected function configure()
     {
         $this
-            ->requiresRootAccess()
             ->setName('up')
             ->setDescription('Start and provision Omnibox')
         ;
