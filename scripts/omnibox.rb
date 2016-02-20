@@ -1,7 +1,7 @@
 class Omnibox
   def Omnibox.configure(config, settings)
     # Configure The Box
-    config.vm.box = "ivonunes/homestead"
+    config.vm.box = "alvassin/homestead-parallels"
     config.vm.hostname = "omnibox"
 
     # Configure A Private Network IP
@@ -10,7 +10,7 @@ class Omnibox
 
     # Configure A Few VirtualBox Settings
     config.vm.provider "virtualbox" do |vb|
-      vb.customize ["modifyvm", :id, "--memory", settings["memory"] ||= "2048"]
+      vb.customize ["modifyvm", :id, "--memory", settings["memory"] ||= "1024"]
       vb.customize ["modifyvm", :id, "--cpus", settings["cpus"] ||= "1"]
       vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]

@@ -93,11 +93,13 @@ if [ "$(dpkg -s elasticsearch 2>/dev/null|wc -l)" -eq "0" ]; then
 fi
 
 # Configure MySQL Access
-mysql --user="root" --password="secret" -e "UPDATE mysql.user SET Password='' WHERE User='root';" 2>/dev/null
-mysql --user="root" --password="secret" -e "FLUSH PRIVILEGES;" 2>/dev/null
-mysql --user="root" --password="" -e "FLUSH PRIVILEGES;" 2>/dev/null
-mysql --user="root" --password="" -e "UPDATE mysql.user SET Password='' WHERE User='root';" 2>/dev/null
-mysql --user="root" --password="" -e "FLUSH PRIVILEGES;" 2>/dev/null
+mysql --user="root" --password="secret" -e "UPDATE mysql.user SET Password='' WHERE User='root';"
+mysql --user="root" --password="secret" -e "UPDATE mysql.user SET authentication_string='' WHERE User='root';"
+mysql --user="root" --password="secret" -e "FLUSH PRIVILEGES;"
+mysql --user="root" --password="" -e "FLUSH PRIVILEGES;"
+mysql --user="root" --password="" -e "UPDATE mysql.user SET Password='' WHERE User='root';"
+mysql --user="root" --password="" -e "UPDATE mysql.user SET authentication_string='' WHERE User='root';"
+mysql --user="root" --password="" -e "FLUSH PRIVILEGES;"
 service mysql reload
 
 # Remove old app shortcuts
@@ -127,4 +129,4 @@ fi
 if [ -z "$(grep "Disable slow GSS API auth" /etc/ssh/sshd_config)" ]; then
     echo "GSSAPIAuthentication no # Disable slow GSS API auth" >> /etc/ssh/sshd_config
 fi
-sudo service ssh restart >/dev/null
+sudo service ssh restart
