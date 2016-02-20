@@ -138,10 +138,12 @@ class SiteManager
         }
 
         if ($site->getWebroot() == 'web') {
-            $site->setWebconfig('symfony2');
+            $site->setWebconfig('symfony');
         }
 
         $site->setWebconfig($qh->promptSiteWebconfig($site));
+
+        $site->setServer($qh->promptSiteServer($site));
 
         $this->configManager->addSite($site);
         $this->configManager->dumpConfig();

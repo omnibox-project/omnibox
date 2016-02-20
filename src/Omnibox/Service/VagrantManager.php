@@ -144,9 +144,9 @@ class VagrantManager
         $fileContent = file_get_contents($this->getParameter('path_to_hosts_file'));
         $fileContent = preg_replace('/\n?.*' . preg_quote($comment) . '.*$/m', '', $fileContent);
         $fileContent = trim($fileContent, "\n");
-        $fileContent .= sprintf("\n%s %s\n", $this->configManager->createRowsForHostsFile('nginx'), $comment);
-        $fileContent .= sprintf("%s %s\n", $this->configManager->createRowsForHostsFile('apache'), $comment);
-        file_put_contents($this->getParameter('path_to_hosts_file'), $fileContent);
+        $fileContent .= sprintf("\n%s\n", $this->configManager->createRowsForHostsFile('nginx', $comment));
+        $fileContent .= sprintf("%s\n", $this->configManager->createRowsForHostsFile('apache', $comment));
+        file_put_contents($this->getParameter('path_to_hosts_file'), $fileContent."\n");
 
         // Flush dns cache
         exec('dscacheutil -flushcache');

@@ -76,7 +76,7 @@ $dispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $
             $event->getInput()->bind($command->getDefinition());
 
             $arguments = $event->getInput()->getArgument('arguments');
-            $subcommand = $arguments[0];
+            $subcommand = @$arguments[0];
 
             if ($command->getRequiresRootAccess() === BaseCommand::ALL_COMMANDS_NEEDS_ROOT_ACCESS || in_array($subcommand, $command->getRequiresRootAccess())) {
                 if (posix_getuid() != 0) {

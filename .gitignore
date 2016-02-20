@@ -5,6 +5,7 @@ omnibox.yaml
 /vendor/
 /composer.phar
 /composer.lock
-/logs/
-/app/
-/ssh/
+/logs/*
+/app/*
+/ssh/*
+/console/*

@@ -175,15 +175,22 @@ class ConfigManager
         $this->dumpYml($this->getConfig()->toArray(), $this->getParameter('path_to_config_file'));
     }
 
-    public function createRowsForHostsFile($server = null)
+    public function createRowsForHostsFile($server = null, $comment = '')
     {
-        return implode(
-            ' ',
-            array_merge(
-                [($server === 'apache' ? $this->getConfig()->getApacheIp() : $this->getConfig()->getIp())],
-                $this->getSiteAttributeList('domain', $server),
-                $this->getSiteAttributeList('alias', $server)
-            )
-        );
+        $rows = '';
+        $ip = ($server === 'apache' ? $this->getConfig()->getApacheIp() : $this->getConfig()->getIp());
+
+        foreach ($this->getSiteAttributeList('domain', $server) as $host) {
+            if (!empty($host)) {
+                $rows .= $ip . ' ' . $host . ' ' . $comment . "\n";
+            }
+        }
+        foreach ($this->getSiteAttributeList('alias', $server) as $host) {
+            if (!empty($host)) {
+                $rows .= $ip . ' ' . $host . ' ' . $comment . "\n";
+            }
+        }
+
+        return $rows;
     }
 }

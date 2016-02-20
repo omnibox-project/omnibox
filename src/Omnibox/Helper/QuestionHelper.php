@@ -61,12 +61,6 @@ class QuestionHelper
         $input = $this->cliHelper->getInputInterface();
         $output = $this->cliHelper->getOutputInterface();
 
-//        if (isset($_SERVER['HOME'])) {
-//            $defaultDirectory = $_SERVER['HOME'] . DIRECTORY_SEPARATOR . $name;
-//        } else {
-//            $defaultDirectory = DIRECTORY_SEPARATOR . $name;
-//        }
-
         $question = new Question('Choose a project directory - it will be created if it doesn\'t exist: ['.$_SERVER['HOME'] . DIRECTORY_SEPARATOR . 'Projects' . DIRECTORY_SEPARATOR . $site->getName().'] ', $_SERVER['HOME'] . DIRECTORY_SEPARATOR . 'Projects' . DIRECTORY_SEPARATOR . $site->getName());
         $question->setAutocompleterValues(array(
                 $_SERVER['HOME'] . DIRECTORY_SEPARATOR . $site->getName(),
@@ -110,10 +104,32 @@ class QuestionHelper
         $input = $this->cliHelper->getInputInterface();
         $output = $this->cliHelper->getOutputInterface();
 
-        $question = new Question('Nginx configuration (options: default, symfony2, magento, wordpress): ['.$site->getWebconfig().'] ', $site->getWebconfig());
+        $question = new Question('Server configuration (options: default, symfony, magento, wordpress): ['.$site->getWebconfig().'] ', $site->getWebconfig());
         $question->setValidator(
             function ($answer) use ($site) {
-                if (!in_array($answer, array('default', 'symfony2', 'magento', 'wordpress'))) {
+                if (!in_array($answer, array('default', 'symfony', 'magento', 'wordpress'))) {
+                    throw new \RuntimeException(
+                        'The configuration does not exist.'
+                    );
+                }
+
+                return $answer;
+            }
+        );
+
+        return $questionHelper->ask($input, $output, $question);
+    }
+
+    public function promptSiteServer(Site $site)
+    {
+        $questionHelper = $this->cliHelper->getHelperSet()->get('question');
+        $input = $this->cliHelper->getInputInterface();
+        $output = $this->cliHelper->getOutputInterface();
+
+        $question = new Question('Web server (options: apache, nginx): ['.$site->getServer().'] ', $site->getServer());
+        $question->setValidator(
+            function ($answer) use ($site) {
+                if (!in_array($answer, array('apache', 'nginx'))) {
                     throw new \RuntimeException(
                         'The configuration does not exist.'
                     );
@@ -132,12 +148,12 @@ class QuestionHelper
         $input = $this->cliHelper->getInputInterface();
         $output = $this->cliHelper->getOutputInterface();
 
-        $question = new Question('Choose your preferred Symfony2 flavor: [1] ', '1');
+        $question = new Question('Choose your preferred Symfony flavor: [1] ', '1');
         $question->setValidator(
             function ($answer) use ($choices) {
                 if (!array_key_exists($answer, $choices)) {
                     throw new \RuntimeException(
-                        'Enter the choice number of your preferred Symfony2 distribution'
+                        'Enter the choice number of your preferred Symfony distribution'
                     );
                 }
 

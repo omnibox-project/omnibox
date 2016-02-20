@@ -23,7 +23,7 @@ class SiteCommand extends BaseCommand
                     'remove' => 'Remove a site',
                     'list' => 'List all sites',
                     'share' => 'Share site on VagrantCloud',
-                    'generate' => 'Generate a new Symfony2 site',
+                    'generate' => 'Generate a new Symfony site',
                     'ssh' => 'Run ssh commands on a specific site',
                     'console' => 'Run app/console commands in a specific project'
                 )
@@ -127,13 +127,19 @@ class SiteCommand extends BaseCommand
                 }
                 $process->setWorkingDirectory('.');
                 $command = implode(' ', $arguments);
+
+                $consoleDir = 'app';
+                if (file_exists($site['directory'] . '/bin/console')) {
+                    $consoleDir = 'bin';
+                }
+
                 $process->setPrefix(
                     array(
                         'ssh',
                         '-t',
                         'vagrant@'.$config->getIp(),
                         '--',
-                        'export XDEBUG_CONFIG="idekey=phpstorm" && export PHP_IDE_CONFIG="serverName='.$site['domain'].'" && cd /home/vagrant/' . $site['name'] . ' && php -d xdebug.remote_host=192.168.10.1 -d xdebug.remote_enable=1 app/console ' . $command . ' 2>&1'
+                        'export XDEBUG_CONFIG="idekey=phpstorm" && export PHP_IDE_CONFIG="serverName='.$site['domain'].'" && cd /home/vagrant/' . $site['name'] . ' && php -d xdebug.remote_host=192.168.10.1 -d xdebug.remote_enable=1 ' . $consoleDir . '/console ' . $command . ' 2>&1'
                     )
                 );
                 $proc = $process->getProcess();
@@ -154,7 +160,7 @@ class SiteCommand extends BaseCommand
 
         $array = array(
             '1' => array('  1', 'Symfony Standard Edition', 'https://github.com/symfony/symfony-standard'),
-            '2' => array('  2', 'Symfony Bootstrap Edition', 'https://github.com/phiamo/symfony-bootstrap'),
+            '2' => array('  2', 'Symfony Webpack React Edition', 'https://github.com/FLM/symfony-webpack-react'),
             '3' => array('  3', 'Symfony REST Edition', 'https://github.com/gimler/symfony-rest-edition'),
             '4' => array('  4', 'Symfony CMF Standard Edition', 'https://github.com/symfony-cmf/standard-edition'),
             '5' => array('  5', 'Symfony Sonata Distribution', 'https://github.com/jmather/symfony-sonata-distribution'),
@@ -188,8 +194,7 @@ class SiteCommand extends BaseCommand
         if ($choice == 1) { # Install Symfony Standard Edition
             $cmd = "php composer.phar create-project symfony/framework-standard-edition ".$directory." '2.5.*'";
         } elseif ($choice == 2) { # Symfony Bootstrap Edition
-            # Needs different installation
-            die('Bootstrap edition is not supported yet...');
+            $cmd = "php composer.phar create-project FLM/symfony-webpack-react ".$directory;
         } elseif ($choice == 3) { # Install Symfony REST Edition
             $cmd = "php composer.phar create-project gimler/symfony-rest-edition --stability=dev ".$directory;
         } elseif ($choice == 4) { # Install Symfony CMF Standard Edition
