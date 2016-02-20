@@ -177,7 +177,7 @@ class SiteCommand extends BaseCommand
                         '-t',
                         'vagrant@'.$config->getIp(),
                         '--',
-                        'php /vagrant/scripts/check.php '.escapeshellarg('/home/vagrant/' . $site['name']) . ' '.($arguments[1] === 'verbose' ? '-v' : '').' 2>&1'
+                        'php /vagrant/scripts/check.php '.escapeshellarg('/home/vagrant/' . $site['name']) . ' '.(@$arguments[1] === 'verbose' ? '-v' : '').' 2>&1'
                     )
                 );
                 $proc = $process->getProcess();
