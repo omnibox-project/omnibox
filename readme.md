@@ -30,15 +30,11 @@ Homestead inspired Vagrant development environment for Symfony, Magento, WordPre
 See "Connecting To Your Databases" at http://laravel.com/docs/4.2/homestead
 
 ## TODO
-- Implement Vagrant-hostmanager?
-- Add tests
 - Confirm delete project, ask if project files should be removed as well
-- Ask if doctrine migrations should be migrated when settings up a new project with migrations
 - Don't just check if config exists, check validate its contents and generate a new if there are any errors
 - Validate config input for IP, memory and cpus
 - When choosing domain or path, list the default options and let the user pick one with a number or enter their own
-- Make OS independent, but keep support for Parallels in OS X
-- Create a output format that is used everywhere
+- Make OS/VM-provider independent, but keep support for Parallels in OS X
 - Delete site by typing the project name instead of id in the list, to avoid accidental deletion
 - Remove input and output arguments from methods
 - Check if database exists when setting up a new project -> promt for removal or add suffix

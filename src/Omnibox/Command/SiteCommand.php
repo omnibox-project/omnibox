@@ -25,7 +25,8 @@ class SiteCommand extends BaseCommand
                     'share' => 'Share site on VagrantCloud',
                     'generate' => 'Generate a new Symfony site',
                     'ssh' => 'Run ssh commands on a specific site',
-                    'console' => 'Run app/console commands in a specific project'
+                    'console' => 'Run app/console commands in a specific project',
+                    'check' => 'Check for outdated packages and security issues in a specific project',
                 )
             )
             ->requiresRootAccess(
@@ -140,6 +141,43 @@ class SiteCommand extends BaseCommand
                         'vagrant@'.$config->getIp(),
                         '--',
                         'export XDEBUG_CONFIG="idekey=phpstorm" && export PHP_IDE_CONFIG="serverName='.$site['domain'].'" && cd /home/vagrant/' . $site['name'] . ' && php -d xdebug.remote_host=192.168.10.1 -d xdebug.remote_enable=1 ' . $consoleDir . '/console ' . $command . ' 2>&1'
+                    )
+                );
+                $proc = $process->getProcess();
+                $proc->setCommandLine($proc->getCommandLine().' 2>/dev/null');
+                $proc->setTty(true);
+                $proc->run();
+
+                return;
+            }
+        }
+
+        throw new \RuntimeException('Site not found.');
+    }
+
+    public function _check()
+    {
+        $input = $this->getContainer()->getCliHelper()->getInputInterface();
+
+        $config = $this->getContainer()->getConfigManager()->getConfig();
+        $arguments = $input->getArgument('arguments');
+
+        foreach ($config->getSitesArray() as $site) {
+            if ($site['name'] === $arguments[0]) {
+                unset($arguments[0]);
+                $process = new ProcessBuilder();
+                foreach ($_ENV as $k => $v) {
+                    $process->setEnv($k, $v);
+                }
+                $process->setWorkingDirectory('.');
+
+                $process->setPrefix(
+                    array(
+                        'ssh',
+                        '-t',
+                        'vagrant@'.$config->getIp(),
+                        '--',
+                        'php /vagrant/scripts/check.php '.escapeshellarg('/home/vagrant/' . $site['name']) . ' '.($arguments[1] === 'verbose' ? '-v' : '').' 2>&1'
                     )
                 );
                 $proc = $process->getProcess();
