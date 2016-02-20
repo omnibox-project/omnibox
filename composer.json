@@ -1,4 +1,8 @@
 {
+    "name": "omnibox-project/omnibox",
+    "license": "MIT",
+    "type": "project",
+    "description": "Homestead inspired Vagrant development environment for all kinds of PHP projects.",
     "require": {
         "symfony/console": "~2.5",
         "psr/log": "~1.0",
