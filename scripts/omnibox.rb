@@ -2,6 +2,7 @@ class Omnibox
   def Omnibox.configure(config, settings)
     # Configure The Box
     config.vm.box = "alvassin/homestead-parallels"
+    config.vm.box_version = "1.0.0"
     config.vm.hostname = "omnibox"
 
     # Configure A Private Network IP
@@ -24,6 +25,7 @@ class Omnibox
       v.memory = settings["memory"]
       v.cpus = settings["cpus"]
       v.name = "omnibox"
+      v.update_guest_tools = true
     end
 
     # Configure The Public Key For SSH Access
