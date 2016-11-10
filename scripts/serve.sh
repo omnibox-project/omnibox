@@ -84,6 +84,13 @@ php omnibox site ssh $name -- \"\$*\"
 echo "$template" > "/vagrant/ssh/$name"
 chmod a+x "/vagrant/ssh/$name"
 
+# Create shortcut in composer/ for executing composer commands for this site
+template="#!/bin/sh
+php omnibox site ssh $name -- \"php -n -d extension=mysqlnd.so -d extension=pdo.so -d extension=pdo_mysql.so -d extension=apcu.so -d extension=intl.so -d extension=json.so -d extension=curl.so -d date.timezone=Europe/Stockholm -d short_open_tag=0 -d memory_limit=2048M /usr/local/bin/composer \$*\"
+"
+echo "$template" > "/vagrant/composer/$name"
+chmod a+x "/vagrant/composer/$name"
+
 # Run specialized serve script for site type
 if [ -f "/vagrant/scripts/serve_$webconfig.sh" ]; then
     bash /vagrant/scripts/serve_$webconfig.sh $@

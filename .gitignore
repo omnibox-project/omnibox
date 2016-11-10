@@ -9,3 +9,4 @@ omnibox.yaml
 /app/*
 /ssh/*
 /console/*
+/composer/*
