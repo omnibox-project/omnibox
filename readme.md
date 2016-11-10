@@ -88,3 +88,4 @@ For a full list use the `verbose` argument:
 - Check if database exists when setting up a new project -> promt for removal or add suffix
 - Add default project directory to config
 - Site ssh and console commands fail when running with sudo - needs correct ssh key
+- Check for uncommited db changes
