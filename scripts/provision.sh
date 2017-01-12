@@ -19,6 +19,21 @@ if [ "$(dpkg -s php5-memcache 2>/dev/null|wc -l)" -eq "0" ]; then
     sudo apt-get install -y php5-memcache
 fi
 
+# Install php5-curl
+if [ "$(dpkg -s php5-curl 2>/dev/null|wc -l)" -eq "0" ]; then
+    sudo apt-get install -y php5-curl
+fi
+
+# Install php5-apcu
+if [ "$(dpkg -s php5-apcu 2>/dev/null|wc -l)" -eq "0" ]; then
+    sudo apt-get install -y php5-apcu
+fi
+
+# Install php5-mysql
+if [ "$(dpkg -s php5-mysql 2>/dev/null|wc -l)" -eq "0" ]; then
+    sudo apt-get install -y php5-mysql
+fi
+
 # Install ca-certificates
 if [ "$(dpkg -s ca-certificates 2>/dev/null|wc -l)" -eq "0" ]; then
     sudo apt-get install -y ca-certificates
@@ -130,3 +145,10 @@ if [ -z "$(grep "Disable slow GSS API auth" /etc/ssh/sshd_config)" ]; then
     echo "GSSAPIAuthentication no # Disable slow GSS API auth" >> /etc/ssh/sshd_config
 fi
 sudo service ssh restart
+
+# Install composer
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '55d6ead61b29c7bdee5cccfb50076874187bd9f21f65d8991d46ec5cc90518f447387fb9f76ebae1fbbacf329e583e30') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+sudo mv composer.phar /usr/local/bin/composer
