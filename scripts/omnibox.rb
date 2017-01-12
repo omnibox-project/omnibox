@@ -1,7 +1,7 @@
 class Omnibox
   def Omnibox.configure(config, settings)
     # Configure The Box
-    config.vm.box = "alvassin/homestead-parallels"
+    config.vm.box = "omnibox/omnibox"
     config.vm.box_version = "1.0.0"
     config.vm.hostname = "omnibox"
 
